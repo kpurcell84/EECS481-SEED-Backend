@@ -1,7 +1,15 @@
-EECS481-SEED
+EECS481-SEED-Backend
 ============
-### Team
-- Jin Seok Andy Lee (jinseok), um_student5
-- Kolin Purcell (purcellc), um_student6
-- Dominic Corona (dccorona), um_student7
-- Gyu Jin Hwang (gyujin), um_student8
+### Notes:
+- SDK located in google_appengine directory
+- hello-endpoints contains a hello world example for an endpoints API
+
+### To Run:
+`google_appengine/dev_appserver.py seed-endpoints`
+
+### TODO:
+- Get adding of patient working (with doctor relation)
+- Get patient and doctor queries working
+- Finalize schema
+- Decide on how to represent users
+- Replace ids with GAE keys

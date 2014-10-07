@@ -11,8 +11,8 @@ class Doctor(db.Model):
     did = db.IntegerProperty()
     first_name = db.StringProperty(required=True)
     last_name = db.StringProperty(required=True)
-    email = db.StringProperty(required=True)
-    phone = db.StringProperty(required=True)
+    email = db.EmailProperty(required=True)
+    phone = db.PhoneNumberProperty(required=True)
     hospital = db.StringProperty()
 
     def to_message(self):
@@ -53,8 +53,8 @@ class Patient(db.Model):
     doctor = db.ReferenceProperty(Doctor)
     first_name = db.StringProperty(required=True)
     last_name = db.StringProperty(required=True)
-    email = db.StringProperty(required=True)
-    phone = db.StringProperty(required=True)
+    email = db.EmailProperty(required=True)
+    phone = db.PhoneNumberProperty(required=True)
 
 
 class PatientData(db.Model):
