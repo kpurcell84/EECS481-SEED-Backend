@@ -1,0 +1,38 @@
+GAE Datastore Terminology:
+	Kind = Table
+	Entity = Row
+	Key = Primary Key
+	Property = Field
+
+#####################################
+
+Doctor (Kind)
+	Doctor (Entity)
+		did (Key)
+		first_name (Property)
+		last_name (Property)
+		email (Property)
+		phone (Property)
+		hospital (Property)
+	...
+
+Patient (Kind)
+	Patient (Entity)
+		pid (Key)
+		doctor (ReferenceProperty)
+		first_name (Property)
+		last_name (Property)
+		email (Property)
+		phone (Property)
+	...
+
+PatientData (Kind)
+	DataSegment (Entity)
+		date_taken (Key)
+		patient (ReferenceProperty)
+		blood_pressure (Property)
+		body_temp (Property)
+		heart_rate (Property)
+		...
+	...
+...
