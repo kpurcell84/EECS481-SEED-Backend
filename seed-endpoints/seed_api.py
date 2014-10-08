@@ -120,6 +120,38 @@ class SeedApi(remote.Service):
 
 ### Watson Stuff ###
 
+    @endpoints.method(WatsonQuestionPutMessage, WatsonQuestionPutMessage,
+                      path='watson_question', http_method='POST',
+                      name='watson_question.put')
+    def watson_question_insert(self, request):
+        """
+        Exposes an API endpoint to insert a watson question/answer pair
+
+        Args:
+            request: An instance of WatsonQuestionPutMessage parsed from the API
+                request.
+        Returns:
+            An instance of the newly inserted question (as a WatsonQuestionPutMessage)
+        """
+        entity = WatsonQuestion.put_from_message(request)
+        return entity.to_message()
+
+    @endpoints.method(WatsonQuestionsRequest, WatsonQuestionsListResponse,
+                      path='watson_recent_questions', http_method='POST',
+                      name='watson_recent_questions.get')
+    def watson_recent_questions_get(self, request):
+        """
+        Exposes an API endpoint to query the n most recent questions patients have asked watson
+
+        Args:
+            request: An instance of WatsonQuestionsRequest parsed from the API
+                request.
+        Returns:
+            An list of the n most recent questions (as a WatsonQuestionListResponse)
+        """
+        return WatsonQuestion.get_recent_questions(request)
+
+
 
 
 APPLICATION = endpoints.api_server([SeedApi],

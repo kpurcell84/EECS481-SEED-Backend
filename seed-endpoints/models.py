@@ -53,7 +53,6 @@ class Doctor(db.Model):
                         hospital=message.hospital)
         new_doctor.put()
         return new_doctor
-        
 
 
 class Patient(db.Model):
@@ -103,3 +102,47 @@ class PData(db.Model):
     blood_pressure = db.StringProperty()
     body_temp = db.IntegerProperty()
     heart_rate = db.IntegerProperty()
+
+
+class WatsonQuestion(db.Model):
+    question = db.StringProperty(required=True)
+    answer = db.StringProperty(required=True)
+    date_asked = db.DateTimeProperty(auto_now_add=True)
+
+    def to_message(self):
+        """
+        Turns the WatsonQuestion entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
+        Returns:
+            An instance of WatsonQuestionPutMessage
+        """
+        return WatsonQuestionPutMessage(question=self.question,
+                                        answer=self.answer)
+
+    @classmethod
+    def get_recent_questions(cls, message):
+        """
+        Builds a message consisting of all the recent questions to Watson
+        Returns:
+            An instance of WatsonQuestionsListResponse
+        """
+        q = cls.all()
+        q.order('-date_asked')
+
+        questions = [ question.to_message() for question in q.run(limit=message.num_questions) ]
+
+        return WatsonQuestionsListResponse(questions=questions)
+
+    @classmethod
+    def put_from_message(cls, message):
+        """
+        Inserts a doctor into the DB
+
+        Args:
+            message: A DoctorPutMessage instance to be inserted, note that the email is used as the entity key
+        Returns:
+            The Doctor entity that was inserted.
+        """
+        new_question = cls(question=message.question,
+                        answer=message.answer)
+        new_question.put()
+        return new_question
