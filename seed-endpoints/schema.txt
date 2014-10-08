@@ -8,21 +8,19 @@ GAE Datastore Terminology:
 
 Doctor (Kind)
 	Doctor (Entity)
-		did (Key)
+		email (Key)
 		first_name (Property)
 		last_name (Property)
-		email (Property)
 		phone (Property)
 		hospital (Property)
 	...
 
 Patient (Kind)
 	Patient (Entity)
-		pid (Key)
+		email (Key)
 		doctor (ReferenceProperty)
 		first_name (Property)
 		last_name (Property)
-		email (Property)
 		phone (Property)
 	...
 

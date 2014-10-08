@@ -8,8 +8,8 @@ EECS481-SEED-Backend
 `google_appengine/dev_appserver.py seed-endpoints`
 
 ### TODO:
-- Get adding of patient working (with doctor relation)
-- Get patient and doctor queries working
+- Add watson entities
 - Finalize schema
 - Decide on how to represent users
-- Replace ids with GAE keys
+- Generate some API test data
+- Generate a representative data set
