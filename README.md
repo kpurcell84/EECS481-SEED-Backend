@@ -6,6 +6,8 @@ EECS481-SEED-Backend
 
 ### To Run:
 `google_appengine/dev_appserver.py seed-endpoints`
+localhost:8000
+localhost:8080:/_ah/api/explorer
 
 ### TODO:
 - Add watson entities

@@ -24,7 +24,7 @@ class PatientPutMessage(messages.Message):
 	last_name = messages.StringField(2, required=True)
 	email = messages.StringField(3, required=True)
 	phone = messages.StringField(4, required=True)
-	doctor_email = messages.StringField(6, required=True)
+	doctor_email = messages.StringField(5, required=True)
 
 class PatientRequest(messages.Message):
 	""" ProtoRPC message definition to represent a patient query """

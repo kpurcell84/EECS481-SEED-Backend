@@ -26,7 +26,7 @@ Patient (Kind)
 
 PatientData (Kind)
 	DataSegment (Entity)
-		date_taken (Key)
+		date_taken+patient_email (Key)
 		patient (ReferenceProperty)
 		blood_pressure (Property)
 		body_temp (Property)

@@ -53,8 +53,7 @@ class Doctor(db.Model):
                         hospital=message.hospital)
         new_doctor.put()
         return new_doctor
-
-
+        
 
 
 class Patient(db.Model):
