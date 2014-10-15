@@ -118,7 +118,51 @@ class SeedApi(remote.Service):
                                     first_name='None', last_name='None', 
                                     phone='None')
 
-### Watson Stuff ###
+    ### Data Stuff ###
+
+    @endpoints.method(PDataRandomPut, message_types.VoidMessage,
+                      path='pdata_random', http_method='POST',
+                      name='pdata_random.put')
+    def pdata_random_insert(self, request):
+        """
+        Exposes an API endpoint to put random patient data in the datastore.
+
+        Times must be formatted as: %Y-%m-%dT%H:%M:%S
+        Frequency is in minutes
+
+        Args:
+            request: An instance of PDataRandomPut parsed from the API request.
+        Returns:
+            Nothing
+        """
+        PData.put_random_pdata(request)
+        return message_types.VoidMessage()
+
+    @endpoints.method(PDataRequest, PDataListResponse,
+                      path='pdata', http_method='POST',
+                      name='pdata.get')
+
+    def pdata_get(self, request):
+        """
+        Exposes an API endpoint to get patient data based on a time range
+
+        Args:
+            request: An instance of PDataRequest parsed from the API
+                request.
+        Returns:
+            An instance of the PDataListResponse containing the requested patient data within the requested time range (inclusive)
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', request.email))
+        patient = q.get()
+
+        if patient != None:
+            return PData.get_range(request)
+        else:
+            return PDataResponse()
+
+
+    ### Watson Stuff ###
 
     @endpoints.method(WatsonQuestionPutMessage, WatsonQuestionPutMessage,
                       path='watson_question', http_method='POST',

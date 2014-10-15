@@ -13,8 +13,6 @@ EECS481-SEED-Backend
 - `google_appengine/endpointscfg.py get_client_lib java -bs gradle seed_api.SeedApi --application seed-endpoints/`
 
 ### TODO:
-- Add watson entities
 - Finalize schema
-- Decide on how to represent users
 - Generate some API test data
 - Generate a representative data set

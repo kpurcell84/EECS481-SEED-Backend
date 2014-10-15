@@ -2,6 +2,9 @@
 Defines the models for the backend datastore
 """
 
+import random
+from datetime import datetime, timedelta
+
 from google.appengine.ext import endpoints
 from google.appengine.ext import db
 
@@ -98,10 +101,76 @@ class Patient(db.Model):
 
 class PData(db.Model):
     patient = db.ReferenceProperty(Patient)
-    date_taken = db.DateTimeProperty()
+    time_taken = db.DateTimeProperty(required=True)
     blood_pressure = db.StringProperty()
-    body_temp = db.IntegerProperty()
+    body_temp = db.FloatProperty()
     heart_rate = db.IntegerProperty()
+
+    def to_message(self):
+        """
+        Turns the PData entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
+        Returns:
+            An instance of PDataResponse
+        """
+        return PDataResponse(time_taken=self.time_taken,
+                            blood_pressure=self.blood_pressure,
+                            body_temp=self.body_temp,
+                            heart_rate=self.heart_rate)
+
+    @classmethod
+    def put_random_pdata(cls, message):
+        """
+        Inserts random patient data into the database
+        Returns:
+            Nothing
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', message.email))
+        patient = q.get()
+
+        if patient == None:
+            print "Cannot put random data, patient doesn't exist"
+            return 
+
+        timediff = message.end_time - message.start_time
+        timediff = timediff.seconds / 60
+        num_inserts = timediff / message.frequency
+
+        for i in range(num_inserts):
+            time_taken = message.start_time + timedelta(minutes=i*message.frequency)
+            blood_pressure = str(random.randrange(80, 110))
+            body_temp = float(random.randrange(97, 101))
+            heart_rate = random.randrange(60, 150)
+
+            random_pdata = cls(patient=patient,
+                                time_taken=time_taken,
+                                blood_pressure=blood_pressure,
+                                body_temp=body_temp,
+                                heart_rate=heart_rate)
+            random_pdata.put()
+
+        return
+
+    @classmethod
+    def get_range(cls, message):
+        """
+        Builds a message consisting of all the available patient data within the requested time range
+        Returns:
+            An instance of PDataListResponse
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', message.email))
+        patient = q.get()
+
+        q = cls.all()
+        q.filter('patient =', patient)
+        q.filter('time_taken >=', message.start_time)
+        q.filter('time_taken <=', message.end_time)
+        q.order('time_taken')
+
+        pdata_list = [ pdata.to_message() for pdata in q.run() ]
+
+        return PDataListResponse(pdata_list=pdata_list)
 
 
 class WatsonQuestion(db.Model):
