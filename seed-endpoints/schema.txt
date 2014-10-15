@@ -22,15 +22,50 @@ Patient (Kind)
 		first_name (Property)
 		last_name (Property)
 		phone (Property)
+		diagnosis (Property) - YES/NO/MAYBE
+		septic_risk (Property)
 	...
 
-PatientData (Kind)
-	DataSegment (Entity)
-		patient_email+time_taken (Key)
+PQuantData (Kind)
+	DataPoint (Entity)
 		patient (ReferenceProperty)
+		time_taken (Property)
 		blood_pressure (Property)
 		body_temp (Property)
+		gsr (Property)
+		skin_temp (Property)
+		air_temp (Property)
 		heart_rate (Property)
-		...
+		activity_types (Property) RUN/BIKE/WALK/STILL/REM/LIGHT/DEEP
+		toss_or_turn (Property) YES/NO
 	...
 ...
+
+PQualData (Kind)
+	DataPoints (Entity)
+		patient (ReferenceProperty)
+		time_taken (Property)
+		q1 (Property)
+		q2 (Property)
+		q3 (Property)
+		...
+	...
+...	
+
+PAlert (Kind)
+	PAlert (Entity)
+		patient (ReferenceProperty)
+		time_alerted (Property)
+		message (Property)
+		priority (Property)
+	...
+...
+
+WatsonQuestion (Kind)
+	QuestionPair (Entity)
+		question (Property)
+		answer (Property)
+		date_asked (Property)
+	...
+...
+

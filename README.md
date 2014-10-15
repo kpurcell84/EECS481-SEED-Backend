@@ -16,3 +16,10 @@ EECS481-SEED-Backend
 - Finalize schema
 - Generate some API test data
 - Generate a representative data set
+- Make schema changes
+- google cloud messenger for notifications
+
+### API Calls:
+- doctor setting patient diagnosis status
+- put for blood_pressure and body_temp
+- 
