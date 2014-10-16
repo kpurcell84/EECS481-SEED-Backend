@@ -52,8 +52,8 @@ PQualData (Kind)
 	...
 ...	
 
-PAlert (Kind)
-	PAlert (Entity)
+Alert (Kind)
+	Alert (Entity)
 		patient (ReferenceProperty)
 		time_alerted (Property)
 		message (Property)

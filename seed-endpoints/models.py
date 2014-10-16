@@ -17,9 +17,7 @@ class Doctor(db.Model):
 
     def to_message(self):
         """
-        Turns the Doctor entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
-        Returns:
-            An instance of DoctorPut
+        Turns the Doctor entity into a ProtoRPC object.
         """
         return DoctorPut(email=self.key().name(),
                                 first_name=self.first_name,
@@ -65,9 +63,7 @@ class Patient(db.Model):
 
     def to_message(self):
         """
-        Turns the Patient entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
-        Returns:
-            An instance of PatientPut
+        Turns the Patient entity into a ProtoRPC object.
         """
         return PatientPut(email=self.key().name(),
                             first_name=self.first_name,
@@ -116,9 +112,7 @@ class PQuantData(db.Model):
 
     def to_message(self):
         """
-        Turns the PData entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
-        Returns:
-            An instance of PDataResponse
+        Turns the PData entity into a ProtoRPC object.
         """
         return PQuantDataResponse(time_taken=self.time_taken,
                             blood_pressure=self.blood_pressure,
@@ -173,6 +167,20 @@ class PQualData(db.Model):
         new_datum.put()
         return
 
+class Alert(db.Model):
+    patient = db.ReferenceProperty(Patient, required=True)
+    time_alerted = db.DateTimeProperty(required=True)
+    message = db.StringProperty(required=True)
+    priority = db.StringProperty(required=True) # Early|Emergency
+
+    def to_message(self):
+        """
+        Turns the Alert entity into a ProtoRPC object. 
+        """
+        return AlertResponse(time_alerted=self.time_alerted,
+                             message=self.message,
+                             priority=self.priority)
+
 class WatsonQuestion(db.Model):
     question = db.StringProperty(required=True)
     answer = db.StringProperty(required=True)
@@ -180,9 +188,7 @@ class WatsonQuestion(db.Model):
 
     def to_message(self):
         """
-        Turns the WatsonQuestion entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
-        Returns:
-            An instance of WatsonQuestionPut
+        Turns the WatsonQuestion entity into a ProtoRPC object.
         """
         return WatsonQuestionPut(question=self.question,
                                         answer=self.answer)

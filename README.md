@@ -22,4 +22,5 @@ EECS481-SEED-Backend
 ### API Calls:
 - doctor setting patient diagnosis status
 - put for blood_pressure and body_temp
-- 
+- doctor getting recent alerts
+- patient getting recent alerts
