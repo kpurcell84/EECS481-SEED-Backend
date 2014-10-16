@@ -25,6 +25,8 @@ class PatientPut(messages.Message):
     email = messages.StringField(3, required=True)
     phone = messages.StringField(4, required=True)
     doctor_email = messages.StringField(5, required=True)
+    diagnosis = messages.StringField(6)
+    septic_risk = messages.IntegerField(7)
 
 class PatientRequest(messages.Message):
     """ ProtoRPC message definition to represent a patient query """
@@ -35,16 +37,6 @@ class PatientListResponse(messages.Message):
     patients = messages.MessageField(PatientPut, 1, repeated=True)
 
 ### PQuantData Stuff ###
-
-class PQuantDataRandomPut(messages.Message):
-    """ ProtoRPC message definition to represent info for generating random patient data for testing
-        - email is patient email
-        - frequency is in minutes 
-    """
-    email = messages.StringField(1, required=True)
-    start_time = message_types.DateTimeField(2, required=True)
-    end_time = message_types.DateTimeField(3, required=True)
-    frequency = messages.IntegerField(4, required=True)
 
 class PQuantDataRequest(messages.Message):
     """ ProtoRPC message definition to represent a patient data query """
@@ -70,6 +62,11 @@ class PQuantDataListResponse(messages.Message):
 
 ### PQual Data Stuff ###
 
+class PQualDataPut(messages.Message):
+    """ ProtoRPC message definition to represent a set of survey responses """
+    email = messages.StringField(1, required=True)
+    time_taken = message_types.DateTimeField(2, required=True)
+    a1 = messages.IntegerField(3, required=True)
 
 ### Watson Stuff ###
 

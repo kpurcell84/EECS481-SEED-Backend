@@ -45,9 +45,9 @@ PQualData (Kind)
 	DataPoints (Entity)
 		patient (ReferenceProperty)
 		time_taken (Property)
-		q1 (Property)
-		q2 (Property)
-		q3 (Property)
+		a1 (Property)
+		a2 (Property)
+		a3 (Property)
 		...
 	...
 ...	

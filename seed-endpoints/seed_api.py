@@ -3,22 +3,38 @@ from protorpc import messages
 from protorpc import message_types
 
 from models import *
+from generate import *
 from seed_api_messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.2',
+@endpoints.api(name='seed', version='v0.3',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
     """ Class which defines Seed API """
+
+    ### General Stuff ###
+
+    @endpoints.method(message_types.VoidMessage, 
+                      message_types.VoidMessage,
+                      path='generate', http_method='POST',
+                      name='generate.put')
+    def generate_data(self, request):
+        """
+        Exposes an API endpoint to generate a random data set for testing.
+        Only run once.
+        Data set parameters adjustable in the backend
+        """
+        generate_sample_data()
+        return message_types.VoidMessage()
 
     ### Doctor Stuff ###
 
     @endpoints.method(DoctorPut, DoctorPut,
                       path='doctor', http_method='POST',
                       name='doctor.put')
-    def doctor_insert(self, request):
+    def doctor_put(self, request):
         """
         Exposes an API endpoint to insert a doctor
 
@@ -28,7 +44,7 @@ class SeedApi(remote.Service):
         Returns:
             An instance of the newly inserted doctor (as a DoctorPut)
         """
-        entity = Doctor.put(request)
+        entity = Doctor.put_from_message(request)
         return entity.to_message()
 
     @endpoints.method(DoctorRequest, DoctorPut,
@@ -81,7 +97,7 @@ class SeedApi(remote.Service):
     @endpoints.method(PatientPut, PatientPut,
                       path='patient', http_method='POST',
                       name='patient.put')
-    def patient_insert(self, request):
+    def patient_put(self, request):
         """
         Exposes an API endpoint to insert a patient
 
@@ -91,7 +107,7 @@ class SeedApi(remote.Service):
         Returns:
             An instance of the newly inserted patient (as a PatientPut)
         """
-        entity = Patient.put(request)
+        entity = Patient.put_from_message(request)
         return entity.to_message()
 
     @endpoints.method(PatientRequest, PatientPut,
@@ -120,31 +136,12 @@ class SeedApi(remote.Service):
 
     ### Data Stuff ###
 
-    @endpoints.method(PQuantDataRandomPut, message_types.VoidMessage,
-                      path='pdata_random', http_method='POST',
-                      name='pdata_random.put')
-    def pdata_random_insert(self, request):
-        """
-        Exposes an API endpoint to put random patient data in the datastore.
-
-        Times must be formatted as: %Y-%m-%dT%H:%M:%S
-        Frequency is in minutes
-
-        Args:
-            request: An instance of PQuantDataRandomPut parsed from the API request.
-        Returns:
-            Nothing
-        """
-        PQuantData.put_random_data(request)
-        return message_types.VoidMessage()
-
     @endpoints.method(PQuantDataRequest, PQuantDataListResponse,
-                      path='pdata', http_method='POST',
-                      name='pdata.get')
-
-    def pdata_get(self, request):
+                      path='p_quant_data', http_method='POST',
+                      name='p_quant_data.get')
+    def p_quant_data_get(self, request):
         """
-        Exposes an API endpoint to get patient data based on a time range
+        Exposes an API endpoint to get quantitative patient data based on a time range
 
         Args:
             request: An instance of PQuantDataRequest parsed from the API
@@ -161,13 +158,35 @@ class SeedApi(remote.Service):
         else:
             return PQuantDataResponse()
 
+    @endpoints.method(PQualDataPut, message_types.VoidMessage,
+                      path='p_qual_data', http_method='POST',
+                      name='p_qual_data.put')
+    def p_qual_data_put(self, request):
+        """
+        Exposes an API endpoint to inserting qualitative patient data from the survey
+
+        Args:
+            request: An instance of PQuantDataPut parsed from the API
+                request.
+        Returns:
+            Nothing
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', request.email))
+        patient = q.get()
+
+        if patient != None:
+            PQualData.put_from_message(request, patient)
+            return message_types.VoidMessage()
+        else:
+            return message_types.VoidMessage()
 
     ### Watson Stuff ###
 
     @endpoints.method(WatsonQuestionPut, WatsonQuestionPut,
                       path='watson_question', http_method='POST',
                       name='watson_question.put')
-    def watson_question_insert(self, request):
+    def watson_question_put(self, request):
         """
         Exposes an API endpoint to insert a watson question/answer pair
 
@@ -177,7 +196,7 @@ class SeedApi(remote.Service):
         Returns:
             An instance of the newly inserted question (as a WatsonQuestionPut)
         """
-        entity = WatsonQuestion.put(request)
+        entity = WatsonQuestion.put_from_message(request)
         return entity.to_message()
 
     @endpoints.method(WatsonQuestionsRequest, WatsonQuestionsListResponse,

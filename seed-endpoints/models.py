@@ -2,9 +2,6 @@
 Defines the models for the backend datastore
 """
 
-import random
-from datetime import datetime, timedelta
-
 from google.appengine.ext import endpoints
 from google.appengine.ext import db
 
@@ -40,7 +37,7 @@ class Doctor(db.Model):
         return PatientListResponse(patients=patients)
 
     @classmethod
-    def put(cls, message):
+    def put_from_message(cls, message):
         """
         Inserts a doctor into the DB
 
@@ -73,13 +70,15 @@ class Patient(db.Model):
             An instance of PatientPut
         """
         return PatientPut(email=self.key().name(),
-                                first_name=self.first_name,
-                                last_name=self.last_name,
-                                phone=self.phone,
-                                doctor_email=self.doctor.key().name())
+                            first_name=self.first_name,
+                            last_name=self.last_name,
+                            phone=self.phone,
+                            doctor_email=self.doctor.key().name(),
+                            diagnosis=self.diagnosis,
+                            septic_risk=self.septic_risk)
 
     @classmethod
-    def put(cls, message):
+    def put_from_message(cls, message):
         """
         Inserts a patient into the DB
 
@@ -98,7 +97,7 @@ class Patient(db.Model):
                         last_name=message.last_name,
                         phone=message.phone,
                         diagnosis='No',
-                        septic_risk='-1')
+                        septic_risk=-1)
         new_patient.put()
         return new_patient
 
@@ -132,40 +131,6 @@ class PQuantData(db.Model):
                             toss_or_turn = self.toss_or_turn)
 
     @classmethod
-    def put_random_data(cls, message):
-        """
-        Inserts random patient data into the database
-        Returns:
-            Nothing
-        """
-        q = Patient.all()
-        q.filter('__key__ =', Key.from_path('Patient', message.email))
-        patient = q.get()
-
-        if patient == None:
-            print "Cannot put random data, patient doesn't exist"
-            return 
-
-        timediff = message.end_time - message.start_time
-        timediff = timediff.seconds / 60
-        num_inserts = timediff / message.frequency
-
-        for i in range(num_inserts):
-            time_taken = message.start_time + timedelta(minutes=i*message.frequency)
-            blood_pressure = str(random.randrange(80, 110))
-            body_temp = float(random.randrange(97, 101))
-            heart_rate = random.randrange(60, 150)
-
-            random_pdata = cls(patient=patient,
-                                time_taken=time_taken,
-                                blood_pressure=blood_pressure,
-                                body_temp=body_temp,
-                                heart_rate=heart_rate)
-            random_pdata.put()
-
-        return
-
-    @classmethod
     def get_range(cls, message):
         """
         Builds a message consisting of all the available patient data within the requested time range
@@ -186,6 +151,27 @@ class PQuantData(db.Model):
 
         return PDataListResponse(pdata_list=pdata_list)
 
+class PQualData(db.Model):
+    patient = db.ReferenceProperty(Patient, required=True)
+    time_taken = db.DateTimeProperty(required=True)
+    a1 = db.IntegerProperty(required=True) # 1-5
+    # TODO add more answers
+
+    @classmethod
+    def put_from_message(cls, message, patient):
+        """
+        Inserts a piece of qualitative data from the survey in the db
+
+        Args:
+            message: A PQualDataPut instance to be inserted, note that the email is used as the entity key
+        Returns:
+            Nothing
+        """
+        new_datum = cls(patient=patient,
+                        time_taken=message.time_taken,
+                        a1=message.a1)
+        new_datum.put()
+        return
 
 class WatsonQuestion(db.Model):
     question = db.StringProperty(required=True)
@@ -216,7 +202,7 @@ class WatsonQuestion(db.Model):
         return WatsonQuestionsListResponse(questions=questions)
 
     @classmethod
-    def put(cls, message):
+    def put_from_message(cls, message):
         """
         Inserts a doctor into the DB
 
