@@ -156,7 +156,7 @@ class SeedApi(remote.Service):
         if patient != None:
             return PQuantData.get_range(request)
         else:
-            return PQuantDataResponse()
+            return PQuantDataListResponse()
 
     @endpoints.method(PQualDataPut, message_types.VoidMessage,
                       path='p_qual_data', http_method='POST',
@@ -213,8 +213,6 @@ class SeedApi(remote.Service):
             An list of the n most recent questions (as a WatsonQuestionListResponse)
         """
         return WatsonQuestion.get_recent_questions(request)
-
-
 
 
 APPLICATION = endpoints.api_server([SeedApi],

@@ -112,7 +112,7 @@ class PQuantData(db.Model):
 
     def to_message(self):
         """
-        Turns the PData entity into a ProtoRPC object.
+        Turns the PQuantData entity into a ProtoRPC object.
         """
         return PQuantDataResponse(time_taken=self.time_taken,
                             blood_pressure=self.blood_pressure,
@@ -129,7 +129,7 @@ class PQuantData(db.Model):
         """
         Builds a message consisting of all the available patient data within the requested time range
         Returns:
-            An instance of PDataListResponse
+            An instance of PQuantDataListResponse
         """
         q = Patient.all()
         q.filter('__key__ =', Key.from_path('Patient', message.email))
@@ -143,7 +143,7 @@ class PQuantData(db.Model):
 
         pdata_list = [ pdata.to_message() for pdata in q.run() ]
 
-        return PDataListResponse(pdata_list=pdata_list)
+        return PQuantDataListResponse(pdata_list=pdata_list)
 
 class PQualData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
@@ -184,7 +184,7 @@ class Alert(db.Model):
 class WatsonQuestion(db.Model):
     question = db.StringProperty(required=True)
     answer = db.StringProperty(required=True)
-    date_asked = db.DateTimeProperty(auto_now_add=True)
+    time_asked = db.DateTimeProperty(auto_now_add=True)
 
     def to_message(self):
         """
