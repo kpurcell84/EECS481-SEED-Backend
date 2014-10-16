@@ -22,9 +22,9 @@ class Doctor(db.Model):
         """
         Turns the Doctor entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
         Returns:
-            An instance of DoctorPutMessage
+            An instance of DoctorPut
         """
-        return DoctorPutMessage(email=self.key().name(),
+        return DoctorPut(email=self.key().name(),
                                 first_name=self.first_name,
                                 last_name=self.last_name,
                                 phone=self.phone,
@@ -40,12 +40,12 @@ class Doctor(db.Model):
         return PatientListResponse(patients=patients)
 
     @classmethod
-    def put_from_message(cls, message):
+    def put(cls, message):
         """
         Inserts a doctor into the DB
 
         Args:
-            message: A DoctorPutMessage instance to be inserted, note that the email is used as the entity key
+            message: A DoctorPut instance to be inserted, note that the email is used as the entity key
         Returns:
             The Doctor entity that was inserted.
         """
@@ -59,30 +59,32 @@ class Doctor(db.Model):
 
 
 class Patient(db.Model):
-    doctor = db.ReferenceProperty(Doctor)
+    doctor = db.ReferenceProperty(Doctor, required=True)
     first_name = db.StringProperty(required=True)
     last_name = db.StringProperty(required=True)
     phone = db.PhoneNumberProperty(required=True)
+    diagnosis = db.StringProperty(required=True) # Yes|No|Maybe
+    septic_risk = db.IntegerProperty(required=True)
 
     def to_message(self):
         """
         Turns the Patient entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
         Returns:
-            An instance of PatientPutMessage
+            An instance of PatientPut
         """
-        return PatientPutMessage(email=self.key().name(),
+        return PatientPut(email=self.key().name(),
                                 first_name=self.first_name,
                                 last_name=self.last_name,
                                 phone=self.phone,
                                 doctor_email=self.doctor.key().name())
 
     @classmethod
-    def put_from_message(cls, message):
+    def put(cls, message):
         """
         Inserts a patient into the DB
 
         Args:
-            message: A PatientPutMessage instance to be inserted.
+            message: A PatientPut instance to be inserted.
         Returns:
             The Patient entity that was inserted.
         """
@@ -94,17 +96,24 @@ class Patient(db.Model):
                         doctor=doctor,
                         first_name=message.first_name,
                         last_name=message.last_name,
-                        phone=message.phone)
+                        phone=message.phone,
+                        diagnosis='No',
+                        septic_risk='-1')
         new_patient.put()
         return new_patient
 
 
-class PData(db.Model):
-    patient = db.ReferenceProperty(Patient)
+class PQuantData(db.Model):
+    patient = db.ReferenceProperty(Patient, required=True)
     time_taken = db.DateTimeProperty(required=True)
     blood_pressure = db.StringProperty()
-    body_temp = db.FloatProperty()
+    body_temp = db.FloatProperty() # Fahrenheit
+    gsr = db.FloatProperty()
+    skin_temp = db.FloatProperty() # Fahrenheit
+    air_temp = db.FloatProperty() # Fahrenheit
     heart_rate = db.IntegerProperty()
+    activity_type = db.StringProperty() # Still|Run|Bike|Walk|Rem|Light|Deep
+    toss_or_turn = db.StringProperty() # Yes|No
 
     def to_message(self):
         """
@@ -112,13 +121,18 @@ class PData(db.Model):
         Returns:
             An instance of PDataResponse
         """
-        return PDataResponse(time_taken=self.time_taken,
+        return PQuantDataResponse(time_taken=self.time_taken,
                             blood_pressure=self.blood_pressure,
                             body_temp=self.body_temp,
-                            heart_rate=self.heart_rate)
+                            gsr = self.gsr,
+                            skin_temp = self.skin_temp,
+                            air_temp = self.air_temp,
+                            heart_rate = self.heart_rate,
+                            activity_type = self.activity_type,
+                            toss_or_turn = self.toss_or_turn)
 
     @classmethod
-    def put_random_pdata(cls, message):
+    def put_random_data(cls, message):
         """
         Inserts random patient data into the database
         Returns:
@@ -182,9 +196,9 @@ class WatsonQuestion(db.Model):
         """
         Turns the WatsonQuestion entity into a ProtoRPC object. This is necessary so the entity can be returned in an API request.
         Returns:
-            An instance of WatsonQuestionPutMessage
+            An instance of WatsonQuestionPut
         """
-        return WatsonQuestionPutMessage(question=self.question,
+        return WatsonQuestionPut(question=self.question,
                                         answer=self.answer)
 
     @classmethod
@@ -202,12 +216,12 @@ class WatsonQuestion(db.Model):
         return WatsonQuestionsListResponse(questions=questions)
 
     @classmethod
-    def put_from_message(cls, message):
+    def put(cls, message):
         """
         Inserts a doctor into the DB
 
         Args:
-            message: A DoctorPutMessage instance to be inserted, note that the email is used as the entity key
+            message: A DoctorPut instance to be inserted, note that the email is used as the entity key
         Returns:
             The Doctor entity that was inserted.
         """

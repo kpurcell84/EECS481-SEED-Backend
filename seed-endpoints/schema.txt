@@ -36,7 +36,7 @@ PQuantData (Kind)
 		skin_temp (Property)
 		air_temp (Property)
 		heart_rate (Property)
-		activity_types (Property) RUN/BIKE/WALK/STILL/REM/LIGHT/DEEP
+		activity_type (Property) RUN/BIKE/WALK/STILL/REM/LIGHT/DEEP
 		toss_or_turn (Property) YES/NO
 	...
 ...

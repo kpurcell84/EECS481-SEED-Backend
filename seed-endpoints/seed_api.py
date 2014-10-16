@@ -15,7 +15,7 @@ class SeedApi(remote.Service):
 
     ### Doctor Stuff ###
 
-    @endpoints.method(DoctorPutMessage, DoctorPutMessage,
+    @endpoints.method(DoctorPut, DoctorPut,
                       path='doctor', http_method='POST',
                       name='doctor.put')
     def doctor_insert(self, request):
@@ -23,15 +23,15 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to insert a doctor
 
         Args:
-            request: An instance of DoctorPutMessage parsed from the API
+            request: An instance of DoctorPut parsed from the API
                 request.
         Returns:
-            An instance of the newly inserted doctor (as a DoctorPutMessage)
+            An instance of the newly inserted doctor (as a DoctorPut)
         """
-        entity = Doctor.put_from_message(request)
+        entity = Doctor.put(request)
         return entity.to_message()
 
-    @endpoints.method(DoctorRequest, DoctorPutMessage,
+    @endpoints.method(DoctorRequest, DoctorPut,
                       path='doctor', http_method='GET',
                       name='doctor.get')
     def doctor_get(self, request):
@@ -42,7 +42,7 @@ class SeedApi(remote.Service):
             request: An instance of DoctorRequest parsed from the API
                 request.
         Returns:
-            An instance of DoctorPutMessage containing all doctor info
+            An instance of DoctorPut containing all doctor info
         """
         q = Doctor.all()
         q.filter('__key__ =', Key.from_path('Doctor', request.email))
@@ -51,7 +51,7 @@ class SeedApi(remote.Service):
         if doctor != None:
             return doctor.to_message() 
         else:
-            return DoctorPutMessage(email='None', first_name='None', 
+            return DoctorPut(email='None', first_name='None', 
                                     last_name='None', phone='None')
 
     @endpoints.method(DoctorRequest, PatientListResponse,
@@ -78,7 +78,7 @@ class SeedApi(remote.Service):
     
     ### Patient Stuff ###
 
-    @endpoints.method(PatientPutMessage, PatientPutMessage,
+    @endpoints.method(PatientPut, PatientPut,
                       path='patient', http_method='POST',
                       name='patient.put')
     def patient_insert(self, request):
@@ -86,15 +86,15 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to insert a patient
 
         Args:
-            request: An instance of PatientPutMessage parsed from the API
+            request: An instance of PatientPut parsed from the API
                 request.
         Returns:
-            An instance of the newly inserted patient (as a PatientPutMessage)
+            An instance of the newly inserted patient (as a PatientPut)
         """
-        entity = Patient.put_from_message(request)
+        entity = Patient.put(request)
         return entity.to_message()
 
-    @endpoints.method(PatientRequest, PatientPutMessage,
+    @endpoints.method(PatientRequest, PatientPut,
                   path='patient', http_method='GET',
                   name='patient.get')
     def patient_get(self, request):
@@ -105,7 +105,7 @@ class SeedApi(remote.Service):
             request: An instance of PatientRequest parsed from the API
                 request.
         Returns:
-            An instance of PatientPutMessage containing all patient info
+            An instance of PatientPut containing all patient info
         """
         q = Patient.all()
         q.filter('__key__ =', Key.from_path('Patient', request.email))
@@ -114,13 +114,13 @@ class SeedApi(remote.Service):
         if patient != None:
             return patient.to_message() 
         else:
-            return PatientPutMessage(email='None', doctor_email='None',
+            return PatientPut(email='None', doctor_email='None',
                                     first_name='None', last_name='None', 
                                     phone='None')
 
     ### Data Stuff ###
 
-    @endpoints.method(PDataRandomPut, message_types.VoidMessage,
+    @endpoints.method(PQuantDataRandomPut, message_types.VoidMessage,
                       path='pdata_random', http_method='POST',
                       name='pdata_random.put')
     def pdata_random_insert(self, request):
@@ -131,14 +131,14 @@ class SeedApi(remote.Service):
         Frequency is in minutes
 
         Args:
-            request: An instance of PDataRandomPut parsed from the API request.
+            request: An instance of PQuantDataRandomPut parsed from the API request.
         Returns:
             Nothing
         """
-        PData.put_random_pdata(request)
+        PQuantData.put_random_data(request)
         return message_types.VoidMessage()
 
-    @endpoints.method(PDataRequest, PDataListResponse,
+    @endpoints.method(PQuantDataRequest, PQuantDataListResponse,
                       path='pdata', http_method='POST',
                       name='pdata.get')
 
@@ -147,24 +147,24 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to get patient data based on a time range
 
         Args:
-            request: An instance of PDataRequest parsed from the API
+            request: An instance of PQuantDataRequest parsed from the API
                 request.
         Returns:
-            An instance of the PDataListResponse containing the requested patient data within the requested time range (inclusive)
+            An instance of the PQuantDataListResponse containing the requested patient data within the requested time range (inclusive)
         """
         q = Patient.all()
         q.filter('__key__ =', Key.from_path('Patient', request.email))
         patient = q.get()
 
         if patient != None:
-            return PData.get_range(request)
+            return PQuantData.get_range(request)
         else:
-            return PDataResponse()
+            return PQuantDataResponse()
 
 
     ### Watson Stuff ###
 
-    @endpoints.method(WatsonQuestionPutMessage, WatsonQuestionPutMessage,
+    @endpoints.method(WatsonQuestionPut, WatsonQuestionPut,
                       path='watson_question', http_method='POST',
                       name='watson_question.put')
     def watson_question_insert(self, request):
@@ -172,12 +172,12 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to insert a watson question/answer pair
 
         Args:
-            request: An instance of WatsonQuestionPutMessage parsed from the API
+            request: An instance of WatsonQuestionPut parsed from the API
                 request.
         Returns:
-            An instance of the newly inserted question (as a WatsonQuestionPutMessage)
+            An instance of the newly inserted question (as a WatsonQuestionPut)
         """
-        entity = WatsonQuestion.put_from_message(request)
+        entity = WatsonQuestion.put(request)
         return entity.to_message()
 
     @endpoints.method(WatsonQuestionsRequest, WatsonQuestionsListResponse,
