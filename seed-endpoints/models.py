@@ -218,6 +218,6 @@ class WatsonQuestion(db.Model):
             The Doctor entity that was inserted.
         """
         new_question = cls(question=message.question,
-                        answer=message.answer)
+                           answer=message.answer)
         new_question.put()
         return new_question

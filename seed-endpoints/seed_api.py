@@ -3,7 +3,7 @@ from protorpc import messages
 from protorpc import message_types
 
 from models import *
-from generate import *
+from generate import generate_sample_data
 from seed_api_messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'

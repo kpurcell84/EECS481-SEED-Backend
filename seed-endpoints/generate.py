@@ -2,8 +2,35 @@ import random
 from datetime import datetime, timedelta
 
 from models import *
+from sample_data import *
 
-def generate_sample_data():
+def generate_doctors():
+    for dic in doctor_list:
+        new_doctor = Doctor(key_name=dic['email'],
+                            first_name=dic['first_name'],
+                            last_name=dic['last_name'],
+                            phone=dic['phone'],
+                            hospital=dic['hospital'])
+        new_doctor.put()
+
+def generate_patients():
+    for dic in patient_list:
+        q = Doctor.all()
+        q.filter('__key__ =', Key.from_path('Doctor', dic['doctor_email']))
+        doctor = q.get()
+        if doctor == None:
+            continue
+
+        new_patient = Patient(key_name=dic['email'],
+                              doctor=doctor,
+                              first_name=dic['first_name'],
+                              last_name=dic['last_name'],
+                              phone=dic['phone'],
+                              diagnosis=dic['diagnosis'],
+                              septic_risk=dic['septic_risk'])
+        new_patient.put()
+
+def generate_quant_data():
     q = Patient.all()
     q.filter('__key__ =', Key.from_path('Patient', message.email))
     patient = q.get()
@@ -30,3 +57,21 @@ def generate_sample_data():
         random_pdata.put()
 
     return
+
+def generate_qual_data():
+    pass
+
+def generate_alerts():
+    pass
+
+def generate_watson_questions():
+    pass
+
+def generate_sample_data():
+    print "Generating sample data"
+    generate_doctors()
+    generate_patients()
+    # generate_quant_data()
+    # generate_qual_data()
+    # generate_alerts()
+    # generate_watson_questions()
