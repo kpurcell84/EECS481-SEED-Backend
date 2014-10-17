@@ -199,6 +199,7 @@ class Alert(db.Model):
         """
         q = cls.all()
         q.filter('patient =', patient)
+        q.filter('priority =', 'Emergency')
         q.order('-time_alerted')
 
         alerts = [ alert.to_message() for alert in q.run() ]

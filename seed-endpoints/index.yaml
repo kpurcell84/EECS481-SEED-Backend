@@ -13,6 +13,13 @@ indexes:
 - kind: Alert
   properties:
   - name: patient
+  - name: priority
+  - name: time_alerted
+    direction: desc
+
+- kind: Alert
+  properties:
+  - name: patient
   - name: time_alerted
     direction: desc
 
