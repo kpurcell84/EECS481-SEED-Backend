@@ -10,6 +10,12 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Alert
+  properties:
+  - name: patient
+  - name: time_alerted
+    direction: desc
+
 - kind: PQuantData
   properties:
   - name: patient

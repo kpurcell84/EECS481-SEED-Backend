@@ -34,6 +34,18 @@ class Doctor(db.Model):
         patients = [patient.to_message() for patient in self.patient_set]
         return PatientListResponse(patients=patients)
 
+    def get_alerts(self):
+        """
+        Builds a message consisting of all the doctor's patients alerts
+        Returns:
+            An instance of AlertListResponse
+        """
+        alerts = []
+        for patient in self.patient_set:
+            for alert in patient.alert_set:
+                alerts.append(alert.to_message())    
+        return AlertListResponse(alerts=alerts)
+
     @classmethod
     def put_from_message(cls, message):
         """
@@ -125,16 +137,12 @@ class PQuantData(db.Model):
                             toss_or_turn = self.toss_or_turn)
 
     @classmethod
-    def get_range(cls, message):
+    def get_range(cls, message, patient):
         """
         Builds a message consisting of all the available patient data within the requested time range
         Returns:
             An instance of PQuantDataListResponse
         """
-        q = Patient.all()
-        q.filter('__key__ =', Key.from_path('Patient', message.email))
-        patient = q.get()
-
         q = cls.all()
         q.filter('patient =', patient)
         q.filter('time_taken >=', message.start_time)
@@ -177,9 +185,25 @@ class Alert(db.Model):
         """
         Turns the Alert entity into a ProtoRPC object. 
         """
-        return AlertResponse(time_alerted=self.time_alerted,
+        return AlertResponse(patient_email=self.patient.key().name(),
+                             time_alerted=self.time_alerted,
                              message=self.message,
                              priority=self.priority)
+
+    @classmethod
+    def get_alerts(cls, patient):
+        """
+        Builds a message consisting of all the alerts for a patient
+        Returns:
+            An instance of AlertListResponse
+        """
+        q = cls.all()
+        q.filter('patient =', patient)
+        q.order('-time_alerted')
+
+        alerts = [ alert.to_message() for alert in q.run() ]
+
+        return AlertListResponse(alerts=alerts)
 
 class WatsonQuestion(db.Model):
     question = db.StringProperty(required=True)
@@ -191,7 +215,7 @@ class WatsonQuestion(db.Model):
         Turns the WatsonQuestion entity into a ProtoRPC object.
         """
         return WatsonQuestionPut(question=self.question,
-                                        answer=self.answer)
+                                 answer=self.answer)
 
     @classmethod
     def get_recent_questions(cls, message):

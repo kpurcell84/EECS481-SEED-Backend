@@ -2,6 +2,8 @@ from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
 
+from datetime import datetime
+
 from models import *
 from generate import generate_sample_data
 from seed_api_messages import *
@@ -14,8 +16,9 @@ CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleuserconten
 class SeedApi(remote.Service):
     """ Class which defines Seed API """
 
-    ### General Stuff ###
-
+#####################
+### General Stuff ###
+#####################
     @endpoints.method(message_types.VoidMessage, 
                       message_types.VoidMessage,
                       path='generate', http_method='POST',
@@ -29,8 +32,9 @@ class SeedApi(remote.Service):
         generate_sample_data()
         return message_types.VoidMessage()
 
-    ### Doctor Stuff ###
-
+####################
+### Doctor Stuff ###
+####################
     @endpoints.method(DoctorPut, DoctorPut,
                       path='doctor', http_method='POST',
                       name='doctor.put')
@@ -91,9 +95,31 @@ class SeedApi(remote.Service):
             return doctor.get_patients() 
         else:
             return PatientListResponse(patients=[])
-    
-    ### Patient Stuff ###
 
+    @endpoints.method(DoctorRequest, AlertListResponse,
+                      path='doctor_alerts', http_method='POST',
+                      name='doctor_alerts.get')
+    def doctor_alerts_get(self, request):
+        """
+        Exposes an API endpoint to get all of a doctors patients alerts
+
+        Args:
+            request: An instance of DoctorRequest parsed from the API request.
+        Returns:
+            An AlertListResponse message
+        """
+        q = Doctor.all()
+        q.filter('__key__ =', Key.from_path('Doctor', request.email))
+        doctor = q.get()
+
+        if doctor != None:
+            return doctor.get_alerts()
+        else:
+            return AlertListResponse()
+
+#####################
+### Patient Stuff ###
+#####################
     @endpoints.method(PatientPut, PatientPut,
                       path='patient', http_method='POST',
                       name='patient.put')
@@ -134,8 +160,78 @@ class SeedApi(remote.Service):
                                     first_name='None', last_name='None', 
                                     phone='None')
 
-    ### Data Stuff ###
+    @endpoints.method(PatientDiagnosisPut, message_types.VoidMessage,
+                      path='patient_diagnosis', http_method='POST',
+                      name='patient_diagnosis.put')
+    def patient_diagnosis_put(self, request):
+        """
+        Exposes an API endpoint to set a patients diagnosis (to be called by a doctor) 
 
+        Args:
+            request: An instance of PatientDiagnosisPut parsed from the API request.
+        Returns:
+            Nothing
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', request.email))
+        patient = q.get()
+
+        if patient != None:
+            patient.diagnosis = request.diagnosis
+            patient.put()
+
+        return message_types.VoidMessage()
+
+    @endpoints.method(PatientManualDataPut, message_types.VoidMessage,
+                      path='patient_man_data_put', http_method='POST',
+                      name='patient_man_data.put')
+    def patient_man_data_put(self, request):
+        """
+        Exposes an API endpoint to insert a patient's manual quantitative data into the datastore
+
+        Args:
+            request: An instance of PatientManualDataPut parsed from the API request.
+        Returns:
+            Nothing
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', request.email))
+        patient = q.get()
+
+        if patient != None:
+            time_taken = datetime.now()
+            new_datum = PQuantData(patient=patient,
+                                   time_taken=time_taken,
+                                   blood_pressure=request.blood_pressure,
+                                   body_temp=request.body_temp)
+            new_datum.put()
+
+        return message_types.VoidMessage()
+
+    @endpoints.method(PatientRequest, AlertListResponse,
+                      path='patient_alerts', http_method='POST',
+                      name='patient_alerts.get')
+    def patient_alerts_get(self, request):
+        """
+        Exposes an API endpoint to get all of a patients alerts
+
+        Args:
+            request: An instance of PatientRequest parsed from the API request.
+        Returns:
+            An AlertListResponse message
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', request.email))
+        patient = q.get()
+
+        if patient != None:
+            return Alert.get_alerts(patient)
+        else:
+            return AlertListResponse()
+
+##################
+### Data Stuff ###
+##################
     @endpoints.method(PQuantDataRequest, PQuantDataListResponse,
                       path='p_quant_data', http_method='POST',
                       name='p_quant_data.get')
@@ -154,7 +250,7 @@ class SeedApi(remote.Service):
         patient = q.get()
 
         if patient != None:
-            return PQuantData.get_range(request)
+            return PQuantData.get_range(request, patient)
         else:
             return PQuantDataListResponse()
 
@@ -181,8 +277,9 @@ class SeedApi(remote.Service):
         else:
             return message_types.VoidMessage()
 
-    ### Watson Stuff ###
-
+####################
+### Watson Stuff ###
+####################
     @endpoints.method(WatsonQuestionPut, WatsonQuestionPut,
                       path='watson_question', http_method='POST',
                       name='watson_question.put')

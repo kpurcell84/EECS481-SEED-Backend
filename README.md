@@ -4,8 +4,9 @@ EECS481-SEED-Backend
 - SDK located in google_appengine directory
 - hello-endpoints contains a hello world example for an endpoints API
 
-#### To Run:
+#### To Run Locally:
 - `google_appengine/dev_appserver.py seed-endpoints`
+	- add option --clear_datastore=yes to clear local datastore
 - Visit localhost:8000 for admin console
 - Visit localhost:8080:/_ah/api/explorer for API Explorer
 
@@ -13,14 +14,10 @@ EECS481-SEED-Backend
 - `google_appengine/endpointscfg.py get_client_lib java -bs gradle seed_api.SeedApi --application seed-endpoints/`
 
 ### TODO:
-- Finalize schema
-- Generate some API test data
-- Generate a representative data set
-- Make schema changes
+- finalize schema
+- generate a representative data set
 - google cloud messenger for notifications
+- upload app
 
 ### API Calls:
-- doctor setting patient diagnosis status
-- put for blood_pressure and body_temp
-- doctor getting recent alerts
-- patient getting recent alerts
+- doctor getting all patients data

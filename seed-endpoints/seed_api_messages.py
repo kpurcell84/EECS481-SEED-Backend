@@ -38,6 +38,18 @@ class PatientListResponse(Message):
     """ ProtoRPC message definition to represent a list of patients reponse """
     patients = MessageField(PatientPut, 1, repeated=True)
 
+class PatientDiagnosisPut(Message):
+    """ ProtoRPC message definition to represent a change of a patients diagnosis """
+    email = StringField(1, required=True)
+    diagnosis = StringField(2, required=True)
+
+class PatientManualDataPut(Message):
+    """ ProtoRPC message definition to represent manual data to be inserted in the datastore """
+    email = StringField(1, required=True)
+    blood_pressure = StringField(2, required=True)
+    body_temp = FloatField(3, required=True)
+
+
 ### PQuantData Stuff ###
 
 class PQuantDataRequest(Message):
@@ -74,9 +86,10 @@ class PQualDataPut(Message):
 
 class AlertResponse(Message):
     """ ProtoRPC message definition to represent a previously triggered alert """
-    time_alerted = DateTimeField(1, required=True)
-    message = StringField(2, required=True)
-    priority = StringField(3, required=True)
+    patient_email = StringField(1, required=True)
+    time_alerted = DateTimeField(2, required=True)
+    message = StringField(3, required=True)
+    priority = StringField(4, required=True)
 
 class AlertListResponse(Message):
     alerts = MessageField(AlertResponse, 1, repeated=True)
