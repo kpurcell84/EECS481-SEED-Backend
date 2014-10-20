@@ -8,6 +8,9 @@ handlers:
 # Endpoints handler
 - url: /_ah/spi/.*
   script: seed_api.APPLICATION
+- url: /cron/fetch
+  script: fetch.APPLICATION
+  login: admin
 
 libraries:
 - name: pycrypto

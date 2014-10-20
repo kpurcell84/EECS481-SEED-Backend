@@ -1,0 +1,4 @@
+cron:
+- description: Fetching from Batch
+  url: /cron/fetch
+  schedule: every 30 minutes
