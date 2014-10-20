@@ -1,10 +1,11 @@
 import webapp2
+import subprocess
 
-class Fetch(webapp2.RequestHandler):
+class Train(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.write('Hello, World!')
 
 APPLICATION = webapp2.WSGIApplication([
-    ('/cron/fetch', Fetch),
+    ('/cron/train', Train),
 ], debug=True)
