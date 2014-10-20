@@ -17,7 +17,6 @@ EECS481-SEED-Backend
 - finalize schema
 - generate a representative data set
 - google cloud messenger for notifications
-- upload app
 
 ### API Calls:
 - doctor getting all patients data
