@@ -80,7 +80,16 @@ class PQualDataPut(Message):
     """ ProtoRPC message definition to represent a set of survey responses """
     email = StringField(1, required=True)
     time_taken = DateTimeField(2, required=True)
-    a1 = IntegerField(3, required=True)
+    a1 = StringField(3, required=True)
+    a2 = StringField(4, required=True)
+    a3 = StringField(5, required=True)
+    a4 = StringField(6, required=True)
+    a5 = StringField(7, required=True)
+    a6 = StringField(8, required=True)
+    a7 = StringField(9, required=True)
+    a8 = StringField(10, required=True)
+    a9 = StringField(11, required=True)
+    a10 = StringField(12, required=True)
 
 ### Alert Stuff ###
 

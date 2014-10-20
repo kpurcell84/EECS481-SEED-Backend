@@ -127,11 +127,25 @@ def generate_qual_data():
 
         for i in range(num_inserts):
             time_taken = start_time + timedelta(minutes=i*frequency)
-            a1 = randrange(1, 6)
+            vals = ['Yes', 'No']
+            a1 = vals[randrange(0, 2)]
+            a2 = vals[randrange(0, 2)]
+            a3 = vals[randrange(0, 2)]
+            a4 = vals[randrange(0, 2)]
+            a5 = vals[randrange(0, 2)]
+            a6 = vals[randrange(0, 2)]
+            a7 = vals[randrange(0, 2)]
+            a8 = vals[randrange(0, 2)]
+            a9 = vals[randrange(0, 2)]
+            a10 = vals[randrange(0, 2)]
 
             random_datum = PQualData(patient=patient,
                                 time_taken=time_taken,
-                                a1=a1)
+                                a1=a1,a2=a2,
+                                a3=a3,a4=a4,
+                                a5=a5,a6=a6,
+                                a7=a7,a8=a8,
+                                a9=a9, a10=a10)
             random_data.append(random_datum)
 
     db.put(random_data)

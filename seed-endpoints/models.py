@@ -156,8 +156,26 @@ class PQuantData(db.Model):
 class PQualData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
     time_taken = db.DateTimeProperty(required=True)
-    a1 = db.IntegerProperty(required=True) # 1-5
-    # TODO add more answers
+    # Do you feel less energetic than usual?
+    a1 = db.StringProperty(required=True) # Yes|No
+    # Do you have any muscle aches?
+    a2 = db.StringProperty(required=True) # Yes|No
+    # Do you have abdominal pain?
+    a3 = db.StringProperty(required=True) # Yes|No
+    # Do you have a headache?
+    a4 = db.StringProperty(required=True) # Yes|No
+    # Do you feel you have to work hard to breathe?
+    a5 = db.StringProperty(required=True) # Yes|No
+    # Do you feel tightness in your lungs?
+    a6 = db.StringProperty(required=True) # Yes|No
+    # Do you have a cough?
+    a7 = db.StringProperty(required=True) # Yes|No
+    # Have you lost weight recently?
+    a8 = db.StringProperty(required=True) # Yes|No
+    # Is your urine output significantly lower than usual?
+    a9 = db.StringProperty(required=True) # Yes|No
+    # Do you feel down, depressed, or hopeless?
+    a10 = db.StringProperty(required=True) # Yes|No
 
     @classmethod
     def put_from_message(cls, message, patient):
@@ -171,7 +189,16 @@ class PQualData(db.Model):
         """
         new_datum = cls(patient=patient,
                         time_taken=message.time_taken,
-                        a1=message.a1)
+                        a1=message.a1,
+                        a2=message.a2,
+                        a3=message.a3,
+                        a4=message.a4,
+                        a5=message.a5,
+                        a6=message.a6,
+                        a7=message.a7,
+                        a8=message.a8,
+                        a9=message.a9,
+                        a10=message.a10)
         new_datum.put()
         return
 

@@ -70,7 +70,7 @@ patient['diagnosis'] = 'Yes'
 patient['septic_risk'] = 89
 patient_list.append(patient)
 
-# PData
+# PQuantData
 active_list = []
 for i in range(70):
 	active_list.append('Still')
@@ -124,7 +124,7 @@ watson_list.append(qa_pair)
 
 qa_pair = {}
 qa_pair['question'] = 'Is Serum interleukin-8 serum level a valuable predictive metric for sepsis?'
-qa_pair['answer'] = 'Yes, it has a 95%% negative predictive value.'
+qa_pair['answer'] = 'Yes, it has a 95% negative predictive value.'
 watson_list.append(qa_pair)
 
 qa_pair = {}
@@ -169,7 +169,7 @@ watson_list.append(qa_pair)
 
 qa_pair = {}
 qa_pair['question'] = 'What are the symptoms of Systemic Inflammatory Response Syndrome (SIRS)'
-qa_pair['answer'] = 'Body temperature below 36 C (degrees Celsius) or above 38 C. Tachycardia, with heart rate above 90 beats per minute. Tachypea (increased respiratory rate), with respiratory rate above 20 per minute, or arterial partial pressure of carbon dioxide (PaCO2) less than 4.3 kPa (kilo Pascals), equivalent to 32 mmHg (millimeters of mercury). White blood cell (WBC) count less than 4,000/mm3(cubic millimeter) or above 12,000/mm3, or the presence of more than 10%% immature neutrophils (band forms).'
+qa_pair['answer'] = 'Body temperature below 36 C (degrees Celsius) or above 38 C. Tachycardia, with heart rate above 90 beats per minute. Tachypea (increased respiratory rate), with respiratory rate above 20 per minute, or arterial partial pressure of carbon dioxide (PaCO2) less than 4.3 kPa (kilo Pascals), equivalent to 32 mmHg (millimeters of mercury). White blood cell (WBC) count less than 4,000/mm3(cubic millimeter) or above 12,000/mm3, or the presence of more than 10% immature neutrophils (band forms).'
 watson_list.append(qa_pair)
 
 qa_pair = {}
