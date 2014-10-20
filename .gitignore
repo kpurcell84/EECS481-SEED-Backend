@@ -1,2 +1,4 @@
 *.pyc
+*cookie.txt
+*.DS_Store
 tictactoe-endpoints/
