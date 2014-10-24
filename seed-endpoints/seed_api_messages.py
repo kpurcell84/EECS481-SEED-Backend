@@ -29,6 +29,7 @@ class PatientPut(Message):
     doctor_email = StringField(5, required=True)
     diagnosis = StringField(6)
     septic_risk = IntegerField(7)
+    basis_pass = StringField(8, required=True)
 
 class PatientRequest(Message):
     """ ProtoRPC message definition to represent a patient query """

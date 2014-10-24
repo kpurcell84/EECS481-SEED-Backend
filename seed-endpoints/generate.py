@@ -35,10 +35,13 @@ def generate_patients():
                               last_name=dic['last_name'],
                               phone=dic['phone'],
                               diagnosis=dic['diagnosis'],
-                              septic_risk=dic['septic_risk'])
+                              septic_risk=dic['septic_risk'],
+                              basis_pass=dic['basis_pass'])
         random_data.append(new_patient)
 
     db.put(random_data)
+
+    patient_list.pop()
 
 def generate_quant_data():
     random_data = []

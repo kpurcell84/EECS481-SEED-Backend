@@ -38,6 +38,7 @@ patient['last_name'] = 'Baggins'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'Yes'
 patient['septic_risk'] = 82
+patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
@@ -48,6 +49,7 @@ patient['last_name'] = 'Gamgee'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'No'
 patient['septic_risk'] = 4
+patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
@@ -58,6 +60,7 @@ patient['last_name'] = 'Brandybuck'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'Maybe'
 patient['septic_risk'] = 56
+patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
@@ -68,6 +71,18 @@ patient['last_name'] = 'Wormtongue'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'Yes'
 patient['septic_risk'] = 89
+patient['basis_pass'] = 'password'
+patient_list.append(patient)
+
+patient = {}
+patient['email'] = 'jinseok@umich.edu'
+patient['doctor_email'] = 'gothmog@lotr.com'
+patient['first_name'] = 'Andy'
+patient['last_name'] = 'Lee'
+patient['phone'] = '734-834-9095'
+patient['diagnosis'] = 'No'
+patient['septic_risk'] = -1
+patient['basis_pass'] = 'eecs481seed'
 patient_list.append(patient)
 
 # PQuantData

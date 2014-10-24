@@ -72,6 +72,7 @@ class Patient(db.Model):
     phone = db.PhoneNumberProperty(required=True)
     diagnosis = db.StringProperty(required=True) # Yes|No|Maybe
     septic_risk = db.IntegerProperty(required=True)
+    basis_pass = db.StringProperty(required=True)
 
     def to_message(self):
         """
@@ -83,7 +84,8 @@ class Patient(db.Model):
                             phone=self.phone,
                             doctor_email=self.doctor.key().name(),
                             diagnosis=self.diagnosis,
-                            septic_risk=self.septic_risk)
+                            septic_risk=self.septic_risk,
+                            basis_pass=self.basis_pass)
 
     @classmethod
     def put_from_message(cls, message):
@@ -105,7 +107,8 @@ class Patient(db.Model):
                         last_name=message.last_name,
                         phone=message.phone,
                         diagnosis='No',
-                        septic_risk=-1)
+                        septic_risk=-1,
+                        basis_pass=message.basis_pass)
         new_patient.put()
         return new_patient
 
