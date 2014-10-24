@@ -8,6 +8,8 @@ handlers:
 # Endpoints handler
 - url: /_ah/spi/.*
   script: seed_api.APPLICATION
+- url: /cron/fetch
+  script: fetch.APPLICATION
 - url: /cron/train
   script: train.APPLICATION
 
