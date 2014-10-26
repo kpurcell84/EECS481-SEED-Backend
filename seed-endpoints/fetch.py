@@ -18,11 +18,12 @@ class Fetch(webapp2.RequestHandler):
     password = 'eecs481seed'
     export_date = '2014-10-24'
     export_offset = 0
+    margin_of_error = 1200 #in seconds
 
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
 
-        self.cur_epoch = time.time()
+        self.cur_epoch = time.time() - self.margin_of_error
         self.export_date = time.strftime(
             "%Y-%m-%d",
             time.localtime(self.cur_epoch))
@@ -88,7 +89,7 @@ class Fetch(webapp2.RequestHandler):
         """
 
         metrics = {} 
-        metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
+        
         url = 'https://app.mybasis.com/api/v1/metricsday/me?' \
             + 'day=' + self.export_date \
             + '&padding=' + str(self.export_offset) \
@@ -99,9 +100,7 @@ class Fetch(webapp2.RequestHandler):
             + '&skin_temp=true' \
             + '&air_temp=true'
         data = self.fetch_url(url)
-        index = int((self.cur_epoch - data['starttime'])/60 - 1)
-        if index < 0:
-            return metrics
+        index = int(self.cur_epoch - data['starttime'])/60
 
         metrics['air_temp'] = data['metrics']['air_temp']['values'][index]
         metrics['gsr'] = data['metrics']['gsr']['values'][index]
@@ -123,6 +122,7 @@ class Fetch(webapp2.RequestHandler):
 
         metrics['activity'] = None
 
+        metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
         return metrics
 
     def store_data(self, patient, metrics):
@@ -143,7 +143,7 @@ class Fetch(webapp2.RequestHandler):
                         skin_temp=metrics['skin_temp'],
                         air_temp=metrics['air_temp'],
                         heart_rate=metrics['heart_rate'],
-                        activity_type=metrics['activity')
+                        activity_type=metrics['activity'])
             data.put()
             self.response.write("Success")
             return True
