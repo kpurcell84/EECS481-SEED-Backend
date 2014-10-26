@@ -123,7 +123,6 @@ class PQuantData(db.Model):
     air_temp = db.FloatProperty() # Fahrenheit
     heart_rate = db.IntegerProperty()
     activity_type = db.StringProperty() # Still|Run|Bike|Walk|Rem|Light|Deep
-    toss_or_turn = db.StringProperty() # Yes|No
 
     def to_message(self):
         """
@@ -136,8 +135,7 @@ class PQuantData(db.Model):
                             skin_temp = self.skin_temp,
                             air_temp = self.air_temp,
                             heart_rate = self.heart_rate,
-                            activity_type = self.activity_type,
-                            toss_or_turn = self.toss_or_turn)
+                            activity_type = self.activity_type)
 
     @classmethod
     def get_range(cls, message, patient):

@@ -76,11 +76,9 @@ def generate_quant_data():
 
             activity_type = None
             heart_rate = None
-            toss_or_turn = 'No'
             if (time_taken.hour >= 0 and time_taken.hour < 8):
                 activity_type = sleep_list[randrange(1,100)]
-                if activity_type == 'Light' and randrange(1,11) == 1:
-                    toss_or_turn = 'Yes'
+
 
                 heart_rate = randrange(45, 60)
             else:
@@ -99,8 +97,7 @@ def generate_quant_data():
                                 skin_temp=skin_temp,
                                 air_temp=air_temp,
                                 heart_rate=heart_rate,
-                                activity_type=activity_type,
-                                toss_or_turn=toss_or_turn)
+                                activity_type=activity_type)
             random_data.append(random_datum)
 
     db.put(random_data)

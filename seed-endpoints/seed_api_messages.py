@@ -69,7 +69,6 @@ class PQuantDataResponse(Message):
     air_temp = FloatField(6)
     heart_rate = IntegerField(7)
     activity_type = StringField(8)
-    toss_or_turn = StringField(9)
 
 class PQuantDataListResponse(Message):
     """ ProtoRPC message definition to represent a set of patient data (over a period of time) """

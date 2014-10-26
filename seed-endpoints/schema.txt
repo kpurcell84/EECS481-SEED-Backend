@@ -24,6 +24,7 @@ Patient (Kind)
 		phone (Property)
 		diagnosis (Property) - YES/NO/MAYBE
 		septic_risk (Property)
+		basis_pass (Property)
 	...
 
 PQuantData (Kind)
@@ -37,7 +38,6 @@ PQuantData (Kind)
 		air_temp (Property)
 		heart_rate (Property)
 		activity_type (Property) RUN/BIKE/WALK/STILL/REM/LIGHT/DEEP
-		toss_or_turn (Property) YES/NO
 	...
 ...
 
@@ -48,7 +48,13 @@ PQualData (Kind)
 		a1 (Property)
 		a2 (Property)
 		a3 (Property)
-		...
+		a4 (Property)
+		a5 (Property)
+		a6 (Property)
+		a7 (Property)
+		a8 (Property)
+		a9 (Property)
+		a10 (Property)
 	...
 ...	
 

@@ -14,9 +14,8 @@ EECS481-SEED-Backend
 - `google_appengine/endpointscfg.py get_client_lib java -bs gradle seed_api.SeedApi --application seed-endpoints/`
 
 ### TODO:
-- finalize schema
 - generate a representative data set
 - google cloud messenger for notifications
+- remove toss and turn
 
 ### API Calls:
-- doctor getting all patients data
