@@ -16,7 +16,6 @@ from datetime import datetime, timedelta
 class Fetch(webapp2.RequestHandler):
     username = 'seedsystem00@gmail.com'
     password = 'eecs481seed'
-    export_date = '2014-10-24'
     export_offset = 0
     margin_of_error = 1200 #in seconds
 
@@ -107,20 +106,46 @@ class Fetch(webapp2.RequestHandler):
         metrics['heart_rate'] = data['metrics']['heartrate']['values'][index]
         metrics['skin_temp'] = data['metrics']['skin_temp']['values'][index]
 
-        self.export_date = '2014-10-09'
+        empty_data = True
+        for key in metrics:
+            if metrics[key] is not None:
+                empty_data = False
+
+        metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
+        if empty_data:
+            metrics['activity'] = None
+            return metrics
+
         url = 'https://app.mybasis.com/api/v2/users/me/days/' \
             + self.export_date + '/activities?' \
             + 'type=sleep' \
             + '&expand=activities.stages,activities.events'
         data = self.fetch_url(url)
 
-        url = 'https://app.mybasis.com/api/v2/users/me/days/' \
-            + self.export_date + '/activities?' \
-            + 'type=run,walk,bike' \
-            + '&expand=activities'
-        data = self.fetch_url(url)
+        is_active = False
+        for activity in data['content']['activities']:
+            for stage in activity['stages']:
+                start_time = stage['start_time']['timestamp']
+                end_time = stage['end_time']['timestamp']
+                if self.cur_epoch >= start_time and self.cur_epoch < end_time:
+                    is_active = True
+                    metrics['activity'] = stage['type'].title()
 
-        metrics['activity'] = None
+        if not is_active:
+            url = 'https://app.mybasis.com/api/v2/users/me/days/' \
+                + self.export_date + '/activities?' \
+                + 'type=run,walk,bike' \
+                + '&expand=activities'
+            data = self.fetch_url(url)
+            for activity in data['content']['activities']:
+                start_time = activity['start_time']['timestamp']
+                end_time = activity['end_time']['timestamp']
+                if self.cur_epoch >= start_time and self.cur_epoch < end_time:
+                    is_active = True
+                    metrics['activity'] = activity['type'].title()
+
+        if not is_active:
+            metrics['activity'] = 'Still'
 
         metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
         return metrics
