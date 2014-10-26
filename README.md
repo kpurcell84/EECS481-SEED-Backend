@@ -13,6 +13,13 @@ EECS481-SEED-Backend
 #### To Package API:
 - `google_appengine/endpointscfg.py get_client_lib java -bs gradle seed_api.SeedApi --application seed-endpoints/`
 
+#### To Upload API:
+- `google_appengine/appcfg.py update seed-endpoints/`
+- Visit https://umichseed.appspot.com/_ah/api/explorer for API explorer
+
+#### To Launch Remote API Shell:
+- `PYTHONPATH=./seed-endpoints google_appengine/remote_api_shell.py -s umichseed.appspot.com`
+
 ### TODO:
 - generate a representative data set
 - google cloud messenger for notifications
