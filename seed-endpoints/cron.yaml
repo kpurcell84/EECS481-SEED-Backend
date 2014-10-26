@@ -2,8 +2,6 @@ cron:
 - description: Fetching from Basis
   url: /cron/fetch
   schedule: every 30 minutes
-  target: fetch
 - description: Training Classification Algorithm
   url: /cron/train
   schedule: every 24 hours
-  target: default
