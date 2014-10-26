@@ -61,6 +61,14 @@ class Fetch(webapp2.RequestHandler):
         return True
 
     def fetch_url(self, url):
+        """
+        Fetch data from url in JSON format
+
+        Args:
+            url: URL string to fetch from
+        Returns:
+            decoded JSON object of data
+        """
         result = urlfetch.fetch(
             url=url,
             method=urlfetch.GET,
@@ -71,15 +79,12 @@ class Fetch(webapp2.RequestHandler):
 
     def get_metrics(self, patient):
         """
-        Get patient data in JSON format
+        Get current patient quantitative data from Basis
 
         Args:
-            metrics_type 
-                0 - ordinary metrics
-                1 - sleep metrics
-                2 - run, walk, bike metrics
+            patient: the corresponding Patient object of the fetched data
         Returns:
-            JSON string of patient data
+            Map of metrics types to values
         """
 
         metrics = {} 
@@ -103,7 +108,7 @@ class Fetch(webapp2.RequestHandler):
         metrics['heart_rate'] = data['metrics']['heartrate']['values'][index]
         metrics['skin_temp'] = data['metrics']['skin_temp']['values'][index]
 
-        self.export_date = '2014-10-08'
+        self.export_date = '2014-10-09'
         url = 'https://app.mybasis.com/api/v2/users/me/days/' \
             + self.export_date + '/activities?' \
             + 'type=sleep' \
@@ -117,7 +122,6 @@ class Fetch(webapp2.RequestHandler):
         data = self.fetch_url(url)
 
         metrics['activity'] = None
-        metrics['toss_or_turn'] = None
 
         return metrics
 
@@ -139,8 +143,7 @@ class Fetch(webapp2.RequestHandler):
                         skin_temp=metrics['skin_temp'],
                         air_temp=metrics['air_temp'],
                         heart_rate=metrics['heart_rate'],
-                        activity_type=metrics['activity'],
-                        toss_or_turn=metrics['toss_or_turn'])
+                        activity_type=metrics['activity')
             data.put()
             self.response.write("Success")
             return True
