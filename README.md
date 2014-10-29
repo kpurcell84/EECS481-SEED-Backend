@@ -23,8 +23,16 @@ EECS481-SEED-Backend
 
 ### TODO:
 - generate a representative data set
+	- How to do this?
+
 - google cloud messenger for notifications
+	- Android client setup: https://github.com/GoogleCloudPlatform/gradle-appengine-templates/tree/master/GcmEndpoints
+	- https://github.com/geeknam/python-gcm
+
 - fill in time periods of no data with null for p_quant_data.get
+	- do on client to minimize data passed over network
+
 - Fix 500 char limit on watson q/a
+	- must be truncated on front end
 
 ### API Calls:

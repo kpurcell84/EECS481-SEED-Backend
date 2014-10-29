@@ -254,7 +254,7 @@ class WatsonQuestion(db.Model):
             An instance of WatsonQuestionsListResponse
         """
         q = cls.all()
-        q.order('-date_asked')
+        q.order('-time_asked')
 
         questions = [ question.to_message() for question in q.run(limit=message.num_questions) ]
 
