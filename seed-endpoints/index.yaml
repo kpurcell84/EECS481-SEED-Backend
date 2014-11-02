@@ -27,3 +27,9 @@ indexes:
   properties:
   - name: patient
   - name: time_taken
+
+- kind: PQuantData
+  properties:
+  - name: patient
+  - name: time_taken
+    direction: desc

@@ -17,7 +17,7 @@ class Fetch(webapp2.RequestHandler):
     username = 'seedsystem00@gmail.com'
     password = 'eecs481seed'
     export_offset = 0
-    margin_of_error = 1200 #in seconds
+    margin_of_error = 3000 #in seconds
 
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
@@ -149,6 +149,25 @@ class Fetch(webapp2.RequestHandler):
 
         metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
         return metrics
+
+    def check_data(self, metrics):
+        """
+        Checks if the fetched metrics indicates sepsis and triggers
+        appropriate alerts
+
+        Args:
+            metrics: map of metrics type to values
+        """
+        return
+
+    def trigger_alert(self, to_patient):
+        """
+        Triggers alert to doctor and optionally to patient
+
+        Args:
+            to_patient: True to send alerts to patient. False otherwise
+        """
+        
 
     def store_data(self, patient, metrics):
         """
