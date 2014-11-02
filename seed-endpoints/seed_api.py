@@ -10,7 +10,7 @@ from seed_api_messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.4.0',
+@endpoints.api(name='seed', version='v0.4.1',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
@@ -35,7 +35,7 @@ class SeedApi(remote.Service):
 ####################
 ### Doctor Stuff ###
 ####################
-    @endpoints.method(DoctorPut, DoctorPut,
+    @endpoints.method(DoctorPut, message_types.VoidMessage,
                       path='doctor', http_method='POST',
                       name='doctor.put')
     def doctor_put(self, request):
@@ -46,10 +46,10 @@ class SeedApi(remote.Service):
             request: An instance of DoctorPut parsed from the API
                 request.
         Returns:
-            An instance of the newly inserted doctor (as a DoctorPut)
+            Nothing
         """
-        entity = Doctor.put_from_message(request)
-        return entity.to_message()
+        Doctor.put_from_message(request)
+        return message_types.VoidMessage()
 
     @endpoints.method(DoctorRequest, DoctorPut,
                       path='doctor', http_method='GET',
@@ -262,7 +262,7 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to inserting qualitative patient data from the survey
 
         Args:
-            request: An instance of PQuantDataPut parsed from the API
+            request: An instance of PQualDataPut parsed from the API
                 request.
         Returns:
             Nothing
@@ -280,7 +280,7 @@ class SeedApi(remote.Service):
 ####################
 ### Watson Stuff ###
 ####################
-    @endpoints.method(WatsonQuestionPut, WatsonQuestionPut,
+    @endpoints.method(WatsonQuestionPut, message_types.VoidMessage,
                       path='watson_question', http_method='POST',
                       name='watson_question.put')
     def watson_question_put(self, request):
@@ -291,10 +291,10 @@ class SeedApi(remote.Service):
             request: An instance of WatsonQuestionPut parsed from the API
                 request.
         Returns:
-            An instance of the newly inserted question (as a WatsonQuestionPut)
+            Nothing
         """
-        entity = WatsonQuestion.put_from_message(request)
-        return entity.to_message()
+        WatsonQuestion.put_from_message(request)
+        return message_types.VoidMessage()
 
     @endpoints.method(WatsonQuestionsRequest, WatsonQuestionsListResponse,
                       path='watson_recent_questions', http_method='POST',

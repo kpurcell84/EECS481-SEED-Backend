@@ -1,5 +1,5 @@
 import webapp2
-#from numpy import *
+from numpy import *
 from google.appengine.ext import db
 from models import *
 
@@ -7,7 +7,7 @@ class Train(webapp2.RequestHandler):
     eta = 0.0001
     c = 1
     num_features = 4
-    #w = zeros(num_features)
+    w = zeros(num_features)
 
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'

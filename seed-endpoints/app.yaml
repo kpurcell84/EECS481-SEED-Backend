@@ -20,6 +20,9 @@ libraries:
   version: latest
 - name: endpoints
   version: 1.0
+- name: numpy
+  version: latest
+
 
 builtins:
 - remote_api: on

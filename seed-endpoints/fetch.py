@@ -14,8 +14,7 @@ from models import *
 from datetime import datetime, timedelta
 
 class Fetch(webapp2.RequestHandler):
-    username = 'seedsystem00@gmail.com'
-    password = 'eecs481seed'
+    patient_key = 'seedsystem00@gmail.com'
     export_offset = 0
     margin_of_error = 3000 #in seconds
 
@@ -30,13 +29,16 @@ class Fetch(webapp2.RequestHandler):
         all_patients = Patient.all()
         all_patients.filter(
             '__key__ =', 
-            Key.from_path('Patient', 'jinseok@umich.edu'))
+            Key.from_path('Patient', self.patient_key))
         patient = all_patients.get()
-        self.login()
+
+        username = patient.key().name()
+        password = patient.basis_pass
+        self.login(username, password)
         data = self.get_metrics(patient)
         self.store_data(patient, data)
 
-    def login(self):
+    def login(self, username, password):
         """
         Login into Basis server
         Returns:
@@ -44,8 +46,8 @@ class Fetch(webapp2.RequestHandler):
         """
         url = 'https://app.mybasis.com/login'
         form_fields = {
-            'username': self.username,
-            'password': self.password,
+            'username': username,
+            'password': password,
         }
         form_data = urllib.urlencode(form_fields)
         result = urlfetch.fetch(
@@ -167,7 +169,7 @@ class Fetch(webapp2.RequestHandler):
         Args:
             to_patient: True to send alerts to patient. False otherwise
         """
-        
+
 
     def store_data(self, patient, metrics):
         """

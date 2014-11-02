@@ -3,6 +3,7 @@ EECS481-SEED-Backend
 ### Notes:
 - SDK located in google_appengine directory
 - hello-endpoints contains a hello world example for an endpoints API
+- Each user consumes 672 GAE Ops per day to fetch data (30 min intervals)
 
 #### To Run Locally:
 - `google_appengine/dev_appserver.py seed-endpoints`
@@ -22,7 +23,16 @@ EECS481-SEED-Backend
 
 ### TODO:
 - generate a representative data set
+	- How to do this?
+
 - google cloud messenger for notifications
-- remove toss and turn
+	- Android client setup: https://github.com/GoogleCloudPlatform/gradle-appengine-templates/tree/master/GcmEndpoints
+	- https://github.com/geeknam/python-gcm
+
+- fill in time periods of no data with null for p_quant_data.get
+	- do on client to minimize data passed over network
+
+- Fix 500 char limit on watson q/a
+	- must be truncated on front end
 
 ### API Calls:

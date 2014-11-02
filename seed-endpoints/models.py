@@ -71,7 +71,7 @@ class Patient(db.Model):
     last_name = db.StringProperty(required=True)
     phone = db.PhoneNumberProperty(required=True)
     diagnosis = db.StringProperty(required=True) # Yes|No|Maybe
-    septic_risk = db.IntegerProperty(required=True)
+    septic_risk = db.IntegerProperty(required=True) # 1-99
     basis_pass = db.StringProperty(required=True)
 
     def to_message(self):
@@ -254,7 +254,7 @@ class WatsonQuestion(db.Model):
             An instance of WatsonQuestionsListResponse
         """
         q = cls.all()
-        q.order('-date_asked')
+        q.order('-time_asked')
 
         questions = [ question.to_message() for question in q.run(limit=message.num_questions) ]
 
