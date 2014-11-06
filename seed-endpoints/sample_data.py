@@ -75,7 +75,7 @@ patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
-patient['email'] = 'jinseok@umich.edu'
+patient['email'] = 'seedsystem00@gmail.com'
 patient['doctor_email'] = 'gothmog@lotr.com'
 patient['first_name'] = 'Andy'
 patient['last_name'] = 'Lee'
