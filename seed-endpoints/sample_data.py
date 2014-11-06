@@ -80,7 +80,7 @@ patient['doctor_email'] = 'gothmog@lotr.com'
 patient['first_name'] = 'Andy'
 patient['last_name'] = 'Lee'
 patient['phone'] = '734-834-9095'
-patient['diagnosis'] = 'No'
+patient['diagnosis'] = 'Maybe'
 patient['septic_risk'] = -1
 patient['basis_pass'] = 'eecs481seed'
 patient_list.append(patient)

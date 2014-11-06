@@ -118,4 +118,8 @@ class WatsonQuestionsListResponse(Message):
     """ ProtoRPC message definition to represent a list of watson question/answer pair """
     questions = MessageField(WatsonQuestionPut, 1, repeated=True)
 
-
+### GCM Stuff ###
+class GcmCredsPut(Message):
+    """ ProtoRPC message definition to represent a user email and Google Cloud Messenger token associated with their device """
+    email = StringField(1, required=True)
+    token = StringField(2, required=True)

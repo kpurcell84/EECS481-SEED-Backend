@@ -154,6 +154,7 @@ class PQuantData(db.Model):
 
         return PQuantDataListResponse(pdata_list=pdata_list)
 
+
 class PQualData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
     time_taken = db.DateTimeProperty(required=True)
@@ -203,6 +204,7 @@ class PQualData(db.Model):
         new_datum.put()
         return
 
+
 class Alert(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
     time_alerted = db.DateTimeProperty(required=True)
@@ -234,6 +236,7 @@ class Alert(db.Model):
 
         return AlertListResponse(alerts=alerts)
 
+
 class WatsonQuestion(db.Model):
     question = db.StringProperty(required=True)
     answer = db.StringProperty(required=True)
@@ -263,14 +266,34 @@ class WatsonQuestion(db.Model):
     @classmethod
     def put_from_message(cls, message):
         """
-        Inserts a doctor into the DB
+        Inserts a new question
 
         Args:
-            message: A DoctorPut instance to be inserted, note that the email is used as the entity key
+            message: A WatsonQuestionPut instance to be inserted
         Returns:
-            The Doctor entity that was inserted.
+            The WatsonQuestion entity that was inserted.
         """
         new_question = cls(question=message.question,
                            answer=message.answer)
         new_question.put()
         return new_question
+
+class GcmCreds(db.Model):
+    email = db.StringProperty(required=True)
+    token = db.StringProperty(required=True)
+
+    @classmethod
+    def put_from_message(cls, message):
+        """
+        Put's a new device token associated with a user into the DB
+
+        Args:
+            message: A GcmCredsPut instance to be inserted
+        Returns:
+            Nothing
+            
+        """
+        new_creds = cls(email=message.email,
+                        token=message.token)
+        new_creds.put()
+        return
