@@ -71,7 +71,7 @@ class PQuantDataResponse(Message):
     activity_type = StringField(8)
 
 class PQuantDataListResponse(Message):
-    """ ProtoRPC message definition to represent a set of patient data (over a period of time) """
+    """ ProtoRPC message definition to represent a set of patient quantitative data (over a period of time) """
     pdata_list = MessageField(PQuantDataResponse, 1, repeated=True)
 
 ### PQual Data Stuff ###
@@ -90,6 +90,16 @@ class PQualDataPut(Message):
     a8 = StringField(10, required=True)
     a9 = StringField(11, required=True)
     a10 = StringField(12, required=True)
+
+class PQualDataRequest(Message):
+    """ ProtoRPC message definition to represent a patient qualitative data query """
+    email = StringField(1, required=True)
+    start_time = DateTimeField(2, required=True)
+    end_time = DateTimeField(3, required=True)
+
+class PQualDataListResponse(Message):
+    """ ProtoRPC message definition to represent a set of patient qualitative data (over a period of time) """
+    pdata_list = MessageField(PQualDataPut, 1, repeated=True)
 
 ### Alert Stuff ###
 

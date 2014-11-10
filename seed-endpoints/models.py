@@ -179,6 +179,35 @@ class PQualData(db.Model):
     # Do you feel down, depressed, or hopeless?
     a10 = db.StringProperty(required=True) # Yes|No
 
+    def to_message(self):
+        """
+        Turns the PQualData entity into a ProtoRPC object.
+        """
+        return PQualDataPut(email=self.patient.key().name(),
+                            time_taken=self.time_taken,
+                            a1=self.a1, a2=self.a2,
+                            a3=self.a3, a4=self.a4,
+                            a5=self.a5, a6=self.a6,
+                            a7=self.a7, a8=self.a8,
+                            a9=self.a9, a10=self.a10)
+
+    @classmethod
+    def get_range(cls, message, patient):
+        """
+        Builds a message consisting of all the available patient data within the requested time range
+        Returns:
+            An instance of PQualDataListResponse
+        """
+        q = cls.all()
+        q.filter('patient =', patient)
+        q.filter('time_taken >=', message.start_time)
+        q.filter('time_taken <=', message.end_time)
+        q.order('time_taken')
+
+        pdata_list = [ pdata.to_message() for pdata in q.run() ]
+
+        return PQualDataListResponse(pdata_list=pdata_list)
+
     @classmethod
     def put_from_message(cls, message, patient):
         """

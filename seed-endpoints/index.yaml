@@ -23,6 +23,11 @@ indexes:
   - name: time_alerted
     direction: desc
 
+- kind: PQualData
+  properties:
+  - name: patient
+  - name: time_taken
+
 - kind: PQuantData
   properties:
   - name: patient
