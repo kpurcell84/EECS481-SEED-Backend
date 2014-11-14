@@ -13,6 +13,9 @@ from google.appengine.ext import db
 from models import *
 from datetime import datetime, timedelta
 
+GCM_URL = 'https://android.googleapis.com/gcm/send'
+API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
+
 class Fetch(webapp2.RequestHandler):
     patient_key = 'seedsystem00@gmail.com'
     export_offset = 0
@@ -37,6 +40,7 @@ class Fetch(webapp2.RequestHandler):
         self.login(username, password)
         data = self.get_metrics(patient)
         self.store_data(patient, data)
+        self.check_data(data)
 
     def login(self, username, password):
         """
@@ -160,16 +164,41 @@ class Fetch(webapp2.RequestHandler):
         Args:
             metrics: map of metrics type to values
         """
+        self.trigger_alert(False, 1)
         return
 
-    def trigger_alert(self, to_patient):
+    def trigger_alert(self, to_patient, registration_id):
         """
         Triggers alert to doctor and optionally to patient
 
         Args:
             to_patient: True to send alerts to patient. False otherwise
         """
-
+        headers = {
+            'Authorization': 'key=%s' % API_KEY,
+            'Content-Type': 'application/json'
+        }
+        payload = {
+            'registration_ids': [registration_id]
+        }
+        result = urlfetch.fetch(
+            url=GCM_URL,
+            method=urlfetch.POST,
+            payload= payload,
+            headers=headers,
+            follow_redirects=False)
+        if result.status_code == 200:
+            decoded = json.loads(result.content)
+            self.response.write("Request successfully transferred\n")
+        elif result.status_code == 400:
+            self.response.write("The request could not be parsed as JSON\n")
+        elif result.status_code == 401:
+            self.response.write("There was an error authenticating the sender account\n")
+        elif result.status_code == 503:
+            self.response.write("GCM service is unavailable\n")
+        else:
+            self.response.write("GCM service error: %d\n" % result.status_code)
+        return
 
     def store_data(self, patient, metrics):
         """
@@ -191,7 +220,7 @@ class Fetch(webapp2.RequestHandler):
                         heart_rate=metrics['heart_rate'],
                         activity_type=metrics['activity'])
             data.put()
-            self.response.write("Success")
+            self.response.write("Success\n")
             return True
 
 APPLICATION = webapp2.WSGIApplication([
