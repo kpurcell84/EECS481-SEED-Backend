@@ -32,7 +32,4 @@ EECS481-SEED-Backend
 - fill in time periods of no data with null for p_quant_data.get
 	- do on client to minimize data passed over network
 
-- Fix 500 char limit on watson q/a
-	- must be truncated on front end
-
 ### API Calls:

@@ -154,6 +154,7 @@ class PQuantData(db.Model):
 
         return PQuantDataListResponse(pdata_list=pdata_list)
 
+
 class PQualData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
     time_taken = db.DateTimeProperty(required=True)
@@ -177,6 +178,35 @@ class PQualData(db.Model):
     a9 = db.StringProperty(required=True) # Yes|No
     # Do you feel down, depressed, or hopeless?
     a10 = db.StringProperty(required=True) # Yes|No
+
+    def to_message(self):
+        """
+        Turns the PQualData entity into a ProtoRPC object.
+        """
+        return PQualDataPut(email=self.patient.key().name(),
+                            time_taken=self.time_taken,
+                            a1=self.a1, a2=self.a2,
+                            a3=self.a3, a4=self.a4,
+                            a5=self.a5, a6=self.a6,
+                            a7=self.a7, a8=self.a8,
+                            a9=self.a9, a10=self.a10)
+
+    @classmethod
+    def get_range(cls, message, patient):
+        """
+        Builds a message consisting of all the available patient data within the requested time range
+        Returns:
+            An instance of PQualDataListResponse
+        """
+        q = cls.all()
+        q.filter('patient =', patient)
+        q.filter('time_taken >=', message.start_time)
+        q.filter('time_taken <=', message.end_time)
+        q.order('time_taken')
+
+        pdata_list = [ pdata.to_message() for pdata in q.run() ]
+
+        return PQualDataListResponse(pdata_list=pdata_list)
 
     @classmethod
     def put_from_message(cls, message, patient):
@@ -202,6 +232,7 @@ class PQualData(db.Model):
                         a10=message.a10)
         new_datum.put()
         return
+
 
 class Alert(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
@@ -234,6 +265,7 @@ class Alert(db.Model):
 
         return AlertListResponse(alerts=alerts)
 
+
 class WatsonQuestion(db.Model):
     question = db.StringProperty(required=True)
     answer = db.StringProperty(required=True)
@@ -263,14 +295,34 @@ class WatsonQuestion(db.Model):
     @classmethod
     def put_from_message(cls, message):
         """
-        Inserts a doctor into the DB
+        Inserts a new question
 
         Args:
-            message: A DoctorPut instance to be inserted, note that the email is used as the entity key
+            message: A WatsonQuestionPut instance to be inserted
         Returns:
-            The Doctor entity that was inserted.
+            The WatsonQuestion entity that was inserted.
         """
         new_question = cls(question=message.question,
                            answer=message.answer)
         new_question.put()
         return new_question
+
+class GcmCreds(db.Model):
+    email = db.StringProperty(required=True)
+    token = db.StringProperty(required=True)
+
+    @classmethod
+    def put_from_message(cls, message):
+        """
+        Put's a new device token associated with a user into the DB
+
+        Args:
+            message: A GcmCredsPut instance to be inserted
+        Returns:
+            Nothing
+            
+        """
+        new_creds = cls(email=message.email,
+                        token=message.token)
+        new_creds.put()
+        return

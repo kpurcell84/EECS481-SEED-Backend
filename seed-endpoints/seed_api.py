@@ -10,7 +10,7 @@ from seed_api_messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.4.1',
+@endpoints.api(name='seed', version='v0.4.3',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
@@ -254,8 +254,30 @@ class SeedApi(remote.Service):
         else:
             return PQuantDataListResponse()
 
+    @endpoints.method(PQualDataRequest, PQualDataListResponse,
+                      path='p_qual_data_get', http_method='POST',
+                      name='p_qual_data.get')
+    def p_qual_data_get(self, request):
+        """
+        Exposes an API endpoint to get qualitative patient data based on a time range
+
+        Args:
+            request: An instance of PQualDataRequest parsed from the API
+                request.
+        Returns:
+            An instance of the PQualDataListResponse containing the requested patient survey responses within the requested time range (inclusive)
+        """
+        q = Patient.all()
+        q.filter('__key__ =', Key.from_path('Patient', request.email))
+        patient = q.get()
+
+        if patient != None:
+            return PQualData.get_range(request, patient)
+        else:
+            return PQualDataListResponse()
+
     @endpoints.method(PQualDataPut, message_types.VoidMessage,
-                      path='p_qual_data', http_method='POST',
+                      path='p_qual_data_put', http_method='POST',
                       name='p_qual_data.put')
     def p_qual_data_put(self, request):
         """
@@ -311,6 +333,24 @@ class SeedApi(remote.Service):
         """
         return WatsonQuestion.get_recent_questions(request)
 
+#################
+### GCM Stuff ###
+#################
+    @endpoints.method(GcmCredsPut, message_types.VoidMessage,
+                      path='gcm_creds', http_method='POST',
+                      name='gcm_creds.put')
+    def watson_question_put(self, request):
+        """
+        Exposes an API endpoint to insert a GCM email/token pair
+
+        Args:
+            request: An instance of GcmCredsPut parsed from the API
+                request.
+        Returns:
+            Nothing
+        """
+        GcmCreds.put_from_message(request)
+        return message_types.VoidMessage()
 
 APPLICATION = endpoints.api_server([SeedApi],
                                    restricted=False)
