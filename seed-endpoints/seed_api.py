@@ -10,7 +10,7 @@ from seed_api_messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.4.3',
+@endpoints.api(name='seed', version='v0.4.4',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
@@ -351,6 +351,36 @@ class SeedApi(remote.Service):
         """
         GcmCreds.put_from_message(request)
         return message_types.VoidMessage()
+
+#####################
+### General Stuff ###
+#####################
+    @endpoints.method(UserCheckRequest, UserCheckResponse,
+                      path='user_check', http_method='POST',
+                      name='user_check.get')
+    def user_check_get(self, request):
+        """
+        Exposes an API endpoint to check the type of user
+
+        Args:
+            request: An instance of UserCheckRequest parsed from the API request.
+        Returns:
+            A UserCheckResponse object indicating what type of user the email is (Doctor | Patient | None)
+        """
+        q1 = Patient.all()
+        q2 = Doctor.all()
+        q1.filter('__key__ =', Key.from_path('Patient', request.email))
+        q2.filter('__key__ =', Key.from_path('Doctor', request.email))
+        patient = q1.get()
+        doctor = q2.get()
+
+        if patient != None:
+            return UserCheckResponse(user_type='Patient')
+        elif doctor != None:
+            return UserCheckResponse(user_type='Doctor')
+        else:
+            return UserCheckResponse(user_type='None')
+
 
 APPLICATION = endpoints.api_server([SeedApi],
                                    restricted=False)

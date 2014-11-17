@@ -309,7 +309,7 @@ class WatsonQuestion(db.Model):
 
 class GcmCreds(db.Model):
     email = db.StringProperty(required=True)
-    token = db.StringProperty(required=True)
+    reg_id = db.StringProperty(required=True)
 
     @classmethod
     def put_from_message(cls, message):
@@ -323,6 +323,6 @@ class GcmCreds(db.Model):
             
         """
         new_creds = cls(email=message.email,
-                        token=message.token)
+                        reg_id=message.token)
         new_creds.put()
         return

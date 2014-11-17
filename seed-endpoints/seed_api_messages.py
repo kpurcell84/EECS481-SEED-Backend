@@ -132,4 +132,13 @@ class WatsonQuestionsListResponse(Message):
 class GcmCredsPut(Message):
     """ ProtoRPC message definition to represent a user email and Google Cloud Messenger token associated with their device """
     email = StringField(1, required=True)
-    token = StringField(2, required=True)
+    reg_id = StringField(2, required=True)
+
+### General Stuff ###
+class UserCheckRequest(Message):
+    """ ProtoRPC message definition to represent a request to get the type of user """
+    email = StringField(1, required=True)
+
+class UserCheckResponse(Message):
+    """ ProtoRPC message definition to represent a response about the type of user type = (Patient | Doctor | None) """
+    user_type = StringField(1, required=True)
