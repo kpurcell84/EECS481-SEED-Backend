@@ -339,7 +339,7 @@ class SeedApi(remote.Service):
     @endpoints.method(GcmCredsPut, message_types.VoidMessage,
                       path='gcm_creds', http_method='POST',
                       name='gcm_creds.put')
-    def watson_question_put(self, request):
+    def gmc_creds_put(self, request):
         """
         Exposes an API endpoint to insert a GCM email/token pair
 
@@ -349,6 +349,13 @@ class SeedApi(remote.Service):
         Returns:
             Nothing
         """
+        if request.old_reg_id != None:
+            q = GcmCreds.all()
+            q.filter('reg_id =', request.old_reg_id)
+            old_creds = q.get()
+            if old_creds != None:
+                old_creds.delete()
+
         GcmCreds.put_from_message(request)
         return message_types.VoidMessage()
 

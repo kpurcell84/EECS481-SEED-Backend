@@ -323,6 +323,6 @@ class GcmCreds(db.Model):
             
         """
         new_creds = cls(email=message.email,
-                        reg_id=message.token)
+                        reg_id=message.new_reg_id)
         new_creds.put()
         return
