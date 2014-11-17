@@ -164,23 +164,29 @@ class Fetch(webapp2.RequestHandler):
         Args:
             metrics: map of metrics type to values
         """
-        self.trigger_alert(False, 1)
+        self.trigger_alert(False, '264671521534-tvoimvlsdfsk44m76ak8jlljej86sm7u.apps.googleusercontent.com')
         return
 
-    def trigger_alert(self, to_patient, registration_id):
+    def trigger_alert(self, to_patient, doctor_reg_id, patient_reg_id = None):
         """
         Triggers alert to doctor and optionally to patient
 
         Args:
-            to_patient: True to send alerts to patient. False otherwise
+            to_patient: True to send alerts to patient, False otherwise
+            doctor_reg_id: Device token of doctor
+            patient_reg_id: Device token of patient
+                            Set only when to_patient is true
         """
         headers = {
             'Authorization': 'key=%s' % API_KEY,
             'Content-Type': 'application/json'
         }
         payload = {
-            'registration_ids': [registration_id]
+            'registration_ids': [doctor_reg_id]
         }
+        if to_patient:
+            payload['registration_ids'].append(patient_reg_id)
+        payload = json.dumps(payload)
         result = urlfetch.fetch(
             url=GCM_URL,
             method=urlfetch.POST,
