@@ -18,6 +18,7 @@ API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 
 class Fetch(webapp2.RequestHandler):
     patient_key = 'seedsystem00@gmail.com'
+    doctor_key = 'strahald@gmail.com'
     export_offset = 0
     margin_of_error = 3000 #in seconds
 
@@ -164,28 +165,29 @@ class Fetch(webapp2.RequestHandler):
         Args:
             metrics: map of metrics type to values
         """
-        self.trigger_alert(False, '264671521534-tvoimvlsdfsk44m76ak8jlljej86sm7u.apps.googleusercontent.com')
+
+        all_devices = GcmCreds.all()
+        all_devices.filter('email =', self.doctor_key)
+        reg_ids = []
+        for device in all_devices:
+            reg_ids.append(device.reg_id)
+        self.trigger_alert(reg_ids)
         return
 
-    def trigger_alert(self, to_patient, doctor_reg_id, patient_reg_id = None):
+    def trigger_alert(self, reg_ids):
         """
         Triggers alert to doctor and optionally to patient
 
         Args:
-            to_patient: True to send alerts to patient, False otherwise
-            doctor_reg_id: Device token of doctor
-            patient_reg_id: Device token of patient
-                            Set only when to_patient is true
+            reg_ids: Array of device tokens to send alerts to
         """
         headers = {
             'Authorization': 'key=%s' % API_KEY,
             'Content-Type': 'application/json'
         }
         payload = {
-            'registration_ids': [doctor_reg_id]
+            'registration_ids': reg_ids
         }
-        if to_patient:
-            payload['registration_ids'].append(patient_reg_id)
         payload = json.dumps(payload)
         result = urlfetch.fetch(
             url=GCM_URL,
@@ -196,6 +198,7 @@ class Fetch(webapp2.RequestHandler):
         if result.status_code == 200:
             decoded = json.loads(result.content)
             self.response.write("Request successfully transferred\n")
+            self.response.write(decoded)
         elif result.status_code == 400:
             self.response.write("The request could not be parsed as JSON\n")
         elif result.status_code == 401:
