@@ -7,7 +7,7 @@ from google.appengine.ext import db
 
 from google.appengine.api.datastore import Key
 
-from seed_api_messages import *
+from messages import *
 
 class Doctor(db.Model):
     first_name = db.StringProperty(required=True)
@@ -250,18 +250,24 @@ class Alert(db.Model):
                              priority=self.priority)
 
     @classmethod
-    def get_alerts(cls, patient):
+    def get_alerts(cls, user, u_type):
         """
         Builds a message consisting of all the alerts for a patient
         Returns:
             An instance of AlertListResponse
         """
-        q = cls.all()
-        q.filter('patient =', patient)
-        q.filter('priority =', 'Emergency')
-        q.order('-time_alerted')
+        alerts = []
 
-        alerts = [ alert.to_message() for alert in q.run() ]
+        q = cls.all()
+        if u_type == "Patient":
+            q.filter('patient =', user)
+            q.filter('priority =', 'Emergency')
+            alerts = [ alert.to_message() for alert in q.run() ]
+        elif u_type == "Doctor":
+            for patient in user.patient_set:
+                for alert in patient.alert_set:
+                    alerts.append(alert.to_message())    
+        q.order('-time_alerted')
 
         return AlertListResponse(alerts=alerts)
 
@@ -309,7 +315,7 @@ class WatsonQuestion(db.Model):
 
 class GcmCreds(db.Model):
     email = db.StringProperty(required=True)
-    token = db.StringProperty(required=True)
+    reg_id = db.StringProperty(required=True)
 
     @classmethod
     def put_from_message(cls, message):
@@ -323,6 +329,14 @@ class GcmCreds(db.Model):
             
         """
         new_creds = cls(email=message.email,
-                        token=message.token)
+                        reg_id=message.new_reg_id)
         new_creds.put()
         return
+
+class ClassWeights(db.Model):
+    w1 = db.FloatProperty(required=True)
+    w2 = db.FloatProperty(required=True)
+    w3 = db.FloatProperty(required=True)
+    w4 = db.FloatProperty(required=True)
+    w5 = db.FloatProperty(required=True)
+    w6 = db.FloatProperty(required=True)

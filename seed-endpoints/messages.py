@@ -14,10 +14,6 @@ class DoctorPut(Message):
     phone = StringField(4, required=True)
     hospital = StringField(5)
 
-class DoctorRequest(Message):
-    """ ProtoRPC message definition to represent a doctor query """
-    email = StringField(1)
-
 ### Patient Stuff ###
 
 class PatientPut(Message):
@@ -30,10 +26,6 @@ class PatientPut(Message):
     diagnosis = StringField(6)
     septic_risk = IntegerField(7)
     basis_pass = StringField(8, required=True)
-
-class PatientRequest(Message):
-    """ ProtoRPC message definition to represent a patient query """
-    email = StringField(1)
 
 class PatientListResponse(Message):
     """ ProtoRPC message definition to represent a list of patients reponse """
@@ -129,7 +121,19 @@ class WatsonQuestionsListResponse(Message):
     questions = MessageField(WatsonQuestionPut, 1, repeated=True)
 
 ### GCM Stuff ###
+
 class GcmCredsPut(Message):
     """ ProtoRPC message definition to represent a user email and Google Cloud Messenger token associated with their device """
     email = StringField(1, required=True)
-    token = StringField(2, required=True)
+    new_reg_id = StringField(2, required=True)
+    old_reg_id = StringField(3)
+
+### General Stuff ###
+
+class EmailRequest(Message):
+    """ ProtoRPC message definition to represent an email """
+    email = StringField(1, required=True)
+
+class UserCheckResponse(Message):
+    """ ProtoRPC message definition to represent a response about the type of user type = (Patient | Doctor | None) """
+    user_type = StringField(1, required=True)

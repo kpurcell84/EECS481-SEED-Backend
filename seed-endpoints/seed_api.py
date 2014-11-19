@@ -6,11 +6,11 @@ from datetime import datetime
 
 from models import *
 from generate import generate_sample_data
-from seed_api_messages import *
+from messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.4.3',
+@endpoints.api(name='seed', version='v0.4.5',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
@@ -51,7 +51,7 @@ class SeedApi(remote.Service):
         Doctor.put_from_message(request)
         return message_types.VoidMessage()
 
-    @endpoints.method(DoctorRequest, DoctorPut,
+    @endpoints.method(EmailRequest, DoctorPut,
                       path='doctor', http_method='GET',
                       name='doctor.get')
     def doctor_get(self, request):
@@ -59,7 +59,7 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to query a doctor based on key (email)
 
         Args:
-            request: An instance of DoctorRequest parsed from the API
+            request: An instance of EmailRequest parsed from the API
                 request.
         Returns:
             An instance of DoctorPut containing all doctor info
@@ -74,7 +74,7 @@ class SeedApi(remote.Service):
             return DoctorPut(email='None', first_name='None', 
                                     last_name='None', phone='None')
 
-    @endpoints.method(DoctorRequest, PatientListResponse,
+    @endpoints.method(EmailRequest, PatientListResponse,
                       path='doctors_patients', http_method='POST',
                       name='doctors_patients.get')
     def doctors_patients_get(self, request):
@@ -82,7 +82,7 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to query all a doctors patients based on the doctor's key (email)
 
         Args:
-            request: An instance of DoctorRequest parsed from the API
+            request: An instance of EmailRequest parsed from the API
                 request.
         Returns:
             An instance of PatientListResponse containing all doctor info
@@ -95,27 +95,6 @@ class SeedApi(remote.Service):
             return doctor.get_patients() 
         else:
             return PatientListResponse(patients=[])
-
-    @endpoints.method(DoctorRequest, AlertListResponse,
-                      path='doctor_alerts', http_method='POST',
-                      name='doctor_alerts.get')
-    def doctor_alerts_get(self, request):
-        """
-        Exposes an API endpoint to get all of a doctors patients alerts
-
-        Args:
-            request: An instance of DoctorRequest parsed from the API request.
-        Returns:
-            An AlertListResponse message
-        """
-        q = Doctor.all()
-        q.filter('__key__ =', Key.from_path('Doctor', request.email))
-        doctor = q.get()
-
-        if doctor != None:
-            return doctor.get_alerts()
-        else:
-            return AlertListResponse()
 
 #####################
 ### Patient Stuff ###
@@ -136,7 +115,7 @@ class SeedApi(remote.Service):
         entity = Patient.put_from_message(request)
         return entity.to_message()
 
-    @endpoints.method(PatientRequest, PatientPut,
+    @endpoints.method(EmailRequest, PatientPut,
                   path='patient', http_method='GET',
                   name='patient.get')
     def patient_get(self, request):
@@ -144,7 +123,7 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to query a patient based on key (email)
 
         Args:
-            request: An instance of PatientRequest parsed from the API
+            request: An instance of EmailRequest parsed from the API
                 request.
         Returns:
             An instance of PatientPut containing all patient info
@@ -207,27 +186,6 @@ class SeedApi(remote.Service):
             new_datum.put()
 
         return message_types.VoidMessage()
-
-    @endpoints.method(PatientRequest, AlertListResponse,
-                      path='patient_alerts', http_method='POST',
-                      name='patient_alerts.get')
-    def patient_alerts_get(self, request):
-        """
-        Exposes an API endpoint to get all of a patients alerts
-
-        Args:
-            request: An instance of PatientRequest parsed from the API request.
-        Returns:
-            An AlertListResponse message
-        """
-        q = Patient.all()
-        q.filter('__key__ =', Key.from_path('Patient', request.email))
-        patient = q.get()
-
-        if patient != None:
-            return Alert.get_alerts(patient)
-        else:
-            return AlertListResponse()
 
 ##################
 ### Data Stuff ###
@@ -299,6 +257,35 @@ class SeedApi(remote.Service):
         else:
             return message_types.VoidMessage()
 
+###################
+### Alert Stuff ###
+###################
+    @endpoints.method(EmailRequest, AlertListResponse,
+                      path='alerts', http_method='POST',
+                      name='alerts.get')
+    def alerts_get(self, request):
+        """
+        Exposes an API endpoint to get alerts associated with a user
+
+        Args:
+            request: An instance of AlertRequest parsed from the API request.
+        Returns:
+            An AlertListResponse message, for a patients contains all of their emergency alerts, for a doctor contains all of their patient's alerts
+        """
+        q1 = Patient.all()
+        q2 = Doctor.all()
+        q1.filter('__key__ =', Key.from_path('Patient', request.email))
+        q2.filter('__key__ =', Key.from_path('Doctor', request.email))
+        patient = q1.get()
+        doctor = q2.get()
+
+        if patient != None:
+            return Alert.get_alerts(patient, "Patient")
+        elif doctor != None:
+            return Alert.get_alerts(doctor, "Doctor")
+        else:
+            return AlertListResponse()
+
 ####################
 ### Watson Stuff ###
 ####################
@@ -339,7 +326,7 @@ class SeedApi(remote.Service):
     @endpoints.method(GcmCredsPut, message_types.VoidMessage,
                       path='gcm_creds', http_method='POST',
                       name='gcm_creds.put')
-    def watson_question_put(self, request):
+    def gmc_creds_put(self, request):
         """
         Exposes an API endpoint to insert a GCM email/token pair
 
@@ -349,8 +336,45 @@ class SeedApi(remote.Service):
         Returns:
             Nothing
         """
+        if request.old_reg_id != None:
+            q = GcmCreds.all()
+            q.filter('reg_id =', request.old_reg_id)
+            old_creds = q.get()
+            if old_creds != None:
+                old_creds.delete()
+
         GcmCreds.put_from_message(request)
         return message_types.VoidMessage()
+
+#####################
+### General Stuff ###
+#####################
+    @endpoints.method(EmailRequest, UserCheckResponse,
+                      path='user_check', http_method='POST',
+                      name='user_check.get')
+    def user_check_get(self, request):
+        """
+        Exposes an API endpoint to check the type of user
+
+        Args:
+            request: An instance of EmailRequest parsed from the API request.
+        Returns:
+            A UserCheckResponse object indicating what type of user the email is (Doctor | Patient | None)
+        """
+        q1 = Patient.all()
+        q2 = Doctor.all()
+        q1.filter('__key__ =', Key.from_path('Patient', request.email))
+        q2.filter('__key__ =', Key.from_path('Doctor', request.email))
+        patient = q1.get()
+        doctor = q2.get()
+
+        if patient != None:
+            return UserCheckResponse(user_type='Patient')
+        elif doctor != None:
+            return UserCheckResponse(user_type='Doctor')
+        else:
+            return UserCheckResponse(user_type='None')
+
 
 APPLICATION = endpoints.api_server([SeedApi],
                                    restricted=False)
