@@ -250,18 +250,24 @@ class Alert(db.Model):
                              priority=self.priority)
 
     @classmethod
-    def get_alerts(cls, patient):
+    def get_alerts(cls, user, u_type):
         """
         Builds a message consisting of all the alerts for a patient
         Returns:
             An instance of AlertListResponse
         """
-        q = cls.all()
-        q.filter('patient =', patient)
-        q.filter('priority =', 'Emergency')
-        q.order('-time_alerted')
+        alerts = []
 
-        alerts = [ alert.to_message() for alert in q.run() ]
+        q = cls.all()
+        if u_type == "Patient":
+            q.filter('patient =', user)
+            q.filter('priority =', 'Emergency')
+            alerts = [ alert.to_message() for alert in q.run() ]
+        elif u_type == "Doctor":
+            for patient in user.patient_set:
+                for alert in patient.alert_set:
+                    alerts.append(alert.to_message())    
+        q.order('-time_alerted')
 
         return AlertListResponse(alerts=alerts)
 

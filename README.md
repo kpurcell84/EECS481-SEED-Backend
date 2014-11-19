@@ -20,16 +20,3 @@ EECS481-SEED-Backend
 
 #### To Launch Remote API Shell:
 - `PYTHONPATH=./seed-endpoints google_appengine/remote_api_shell.py -s umichseed.appspot.com`
-
-### TODO:
-- generate a representative data set
-	- How to do this?
-
-- google cloud messenger for notifications
-	- Android client setup: https://github.com/GoogleCloudPlatform/gradle-appengine-templates/tree/master/GcmEndpoints
-	- https://github.com/geeknam/python-gcm
-
-- fill in time periods of no data with null for p_quant_data.get
-	- do on client to minimize data passed over network
-
-### API Calls:

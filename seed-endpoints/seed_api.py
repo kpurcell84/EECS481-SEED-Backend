@@ -208,27 +208,6 @@ class SeedApi(remote.Service):
 
         return message_types.VoidMessage()
 
-    @endpoints.method(PatientRequest, AlertListResponse,
-                      path='patient_alerts', http_method='POST',
-                      name='patient_alerts.get')
-    def patient_alerts_get(self, request):
-        """
-        Exposes an API endpoint to get all of a patients alerts
-
-        Args:
-            request: An instance of PatientRequest parsed from the API request.
-        Returns:
-            An AlertListResponse message
-        """
-        q = Patient.all()
-        q.filter('__key__ =', Key.from_path('Patient', request.email))
-        patient = q.get()
-
-        if patient != None:
-            return Alert.get_alerts(patient)
-        else:
-            return AlertListResponse()
-
 ##################
 ### Data Stuff ###
 ##################
@@ -298,6 +277,35 @@ class SeedApi(remote.Service):
             return message_types.VoidMessage()
         else:
             return message_types.VoidMessage()
+
+###################
+### Alert Stuff ###
+###################
+    @endpoints.method(PatientRequest, AlertListResponse,
+                      path='alerts', http_method='POST',
+                      name='alerts.get')
+    def alerts_get(self, request):
+        """
+        Exposes an API endpoint to get alerts associated with a user
+
+        Args:
+            request: An instance of AlertRequest parsed from the API request.
+        Returns:
+            An AlertListResponse message, for a patients contains all of their emergency alerts, for a doctor contains all of their patient's alerts
+        """
+        q1 = Patient.all()
+        q2 = Doctor.all()
+        q1.filter('__key__ =', Key.from_path('Patient', request.email))
+        q2.filter('__key__ =', Key.from_path('Doctor', request.email))
+        patient = q1.get()
+        doctor = q2.get()
+
+        if patient != None:
+            return Alert.get_alerts(patient, "Patient")
+        elif doctor != None:
+            return Alert.get_alerts(doctor, "Doctor")
+        else:
+            return AlertListResponse()
 
 ####################
 ### Watson Stuff ###

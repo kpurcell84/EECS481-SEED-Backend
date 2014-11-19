@@ -4,27 +4,11 @@
 doctor_list = []
 
 doctor = {}
-doctor['email'] = 'smeagol@lotr.com'
-doctor['first_name'] = 'Smeag'
-doctor['last_name'] = 'Ol'
+doctor['email'] = 'strahald@gmail.com'
+doctor['first_name'] = 'Smeagol'
+doctor['last_name'] = 'Trahald'
 doctor['phone'] = '696-969-6969'
 doctor['hospital'] = 'Misty Mountains Hospital'
-doctor_list.append(doctor)
-
-doctor = {}
-doctor['email'] = 'sauron@lotr.com'
-doctor['first_name'] = 'Saur'
-doctor['last_name'] = 'On'
-doctor['phone'] = '555-555-5555'
-doctor['hospital'] = 'Mordor Healthcare Associates'
-doctor_list.append(doctor)
-
-doctor = {}
-doctor['email'] = 'gothmog@lotr.com'
-doctor['first_name'] = 'Goth'
-doctor['last_name'] = 'Mog'
-doctor['phone'] = '555-555-5555'
-doctor['hospital'] = 'Pelennor Field Emergency Clinic'
 doctor_list.append(doctor)
 
 # Patients
@@ -32,55 +16,33 @@ patient_list = []
 
 patient = {}
 patient['email'] = 'frodo@lotr.com'
-patient['doctor_email'] = 'smeagol@lotr.com'
+patient['doctor_email'] = 'strahald@gmail.com'
 patient['first_name'] = 'Frodo'
 patient['last_name'] = 'Baggins'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'Yes'
-patient['septic_risk'] = 82
+patient['septic_risk'] = -1
 patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
 patient['email'] = 'sam@lotr.com'
-patient['doctor_email'] = 'smeagol@lotr.com'
+patient['doctor_email'] = 'strahald@gmail.com'
 patient['first_name'] = 'Samwise'
 patient['last_name'] = 'Gamgee'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'No'
-patient['septic_risk'] = 4
-patient['basis_pass'] = 'password'
-patient_list.append(patient)
-
-patient = {}
-patient['email'] = 'merry@lotr.com'
-patient['doctor_email'] = 'smeagol@lotr.com'
-patient['first_name'] = 'Merrywine'
-patient['last_name'] = 'Brandybuck'
-patient['phone'] = '555-555-5555'
-patient['diagnosis'] = 'Maybe'
-patient['septic_risk'] = 56
-patient['basis_pass'] = 'password'
-patient_list.append(patient)
-
-patient = {}
-patient['email'] = 'grima@lotr.com'
-patient['doctor_email'] = 'sauron@lotr.com'
-patient['first_name'] = 'Grima'
-patient['last_name'] = 'Wormtongue'
-patient['phone'] = '555-555-5555'
-patient['diagnosis'] = 'Yes'
-patient['septic_risk'] = 89
+patient['septic_risk'] = -1
 patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
 patient['email'] = 'seedsystem00@gmail.com'
-patient['doctor_email'] = 'gothmog@lotr.com'
+patient['doctor_email'] = 'strahald@gmail.com'
 patient['first_name'] = 'Andy'
 patient['last_name'] = 'Lee'
 patient['phone'] = '734-834-9095'
-patient['diagnosis'] = 'Maybe'
+patient['diagnosis'] = 'No'
 patient['septic_risk'] = -1
 patient['basis_pass'] = 'eecs481seed'
 patient_list.append(patient)

@@ -129,6 +129,7 @@ class WatsonQuestionsListResponse(Message):
     questions = MessageField(WatsonQuestionPut, 1, repeated=True)
 
 ### GCM Stuff ###
+
 class GcmCredsPut(Message):
     """ ProtoRPC message definition to represent a user email and Google Cloud Messenger token associated with their device """
     email = StringField(1, required=True)
@@ -136,6 +137,7 @@ class GcmCredsPut(Message):
     old_reg_id = StringField(3)
 
 ### General Stuff ###
+
 class UserCheckRequest(Message):
     """ ProtoRPC message definition to represent a request to get the type of user """
     email = StringField(1, required=True)
