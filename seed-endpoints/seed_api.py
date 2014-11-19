@@ -260,7 +260,7 @@ class SeedApi(remote.Service):
 ###################
 ### Alert Stuff ###
 ###################
-    @endpoints.method(EmailRequest, AlertListResponse,
+    @endpoints.method(AlertsRequest, AlertListResponse,
                       path='alerts', http_method='POST',
                       name='alerts.get')
     def alerts_get(self, request):
@@ -268,9 +268,9 @@ class SeedApi(remote.Service):
         Exposes an API endpoint to get alerts associated with a user
 
         Args:
-            request: An instance of AlertRequest parsed from the API request.
+            request: An instance of AlertsRequest parsed from the API request.
         Returns:
-            An AlertListResponse message, for a patients contains all of their emergency alerts, for a doctor contains all of their patient's alerts
+            An AlertListResponse message, for a patients contains all of their emergency alerts, for a doctor contains all of their patient's alerts (all within a time range)
         """
         q1 = Patient.all()
         q2 = Doctor.all()
@@ -280,9 +280,9 @@ class SeedApi(remote.Service):
         doctor = q2.get()
 
         if patient != None:
-            return Alert.get_alerts(patient, "Patient")
+            return Alert.get_alerts(request, patient, "Patient")
         elif doctor != None:
-            return Alert.get_alerts(doctor, "Doctor")
+            return Alert.get_alerts(request, doctor, "Doctor")
         else:
             return AlertListResponse()
 

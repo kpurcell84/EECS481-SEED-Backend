@@ -95,6 +95,11 @@ class PQualDataListResponse(Message):
 
 ### Alert Stuff ###
 
+class AlertsRequest(Message):
+    email = StringField(1, required=True)
+    start_time = DateTimeField(2, required=True)
+    end_time = DateTimeField(3, required=True)
+
 class AlertResponse(Message):
     """ ProtoRPC message definition to represent a previously triggered alert """
     patient_email = StringField(1, required=True)
