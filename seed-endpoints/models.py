@@ -332,3 +332,11 @@ class GcmCreds(db.Model):
                         reg_id=message.new_reg_id)
         new_creds.put()
         return
+
+class ClassWeights(db.Model):
+    w1 = db.FloatProperty(required=True)
+    w2 = db.FloatProperty(required=True)
+    w3 = db.FloatProperty(required=True)
+    w4 = db.FloatProperty(required=True)
+    w5 = db.FloatProperty(required=True)
+    w6 = db.FloatProperty(required=True)
