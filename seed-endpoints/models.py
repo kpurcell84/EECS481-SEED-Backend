@@ -7,7 +7,7 @@ from google.appengine.ext import db
 
 from google.appengine.api.datastore import Key
 
-from seed_api_messages import *
+from messages import *
 
 class Doctor(db.Model):
     first_name = db.StringProperty(required=True)

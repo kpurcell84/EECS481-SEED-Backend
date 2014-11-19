@@ -14,10 +14,6 @@ class DoctorPut(Message):
     phone = StringField(4, required=True)
     hospital = StringField(5)
 
-class DoctorRequest(Message):
-    """ ProtoRPC message definition to represent a doctor query """
-    email = StringField(1)
-
 ### Patient Stuff ###
 
 class PatientPut(Message):
@@ -30,10 +26,6 @@ class PatientPut(Message):
     diagnosis = StringField(6)
     septic_risk = IntegerField(7)
     basis_pass = StringField(8, required=True)
-
-class PatientRequest(Message):
-    """ ProtoRPC message definition to represent a patient query """
-    email = StringField(1)
 
 class PatientListResponse(Message):
     """ ProtoRPC message definition to represent a list of patients reponse """
@@ -138,8 +130,8 @@ class GcmCredsPut(Message):
 
 ### General Stuff ###
 
-class UserCheckRequest(Message):
-    """ ProtoRPC message definition to represent a request to get the type of user """
+class EmailRequest(Message):
+    """ ProtoRPC message definition to represent an email """
     email = StringField(1, required=True)
 
 class UserCheckResponse(Message):
