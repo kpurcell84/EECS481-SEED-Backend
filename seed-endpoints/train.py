@@ -25,7 +25,7 @@ class Train(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'text/plain'
         self.load_data()
         self.train()
-        self.store_weights()
+        #self.store_weights()
 
     def load_data(self):
         #self.response.write('Loading data...\n')
@@ -85,6 +85,13 @@ class Train(webapp2.RequestHandler):
         """
         Store weights into datastore
         """
+        data = ClassWeights(w1=self.w_vector[0,0],
+                            w2=self.w_vector[1,0],
+                            w3=self.w_vector[2,0],
+                            w4=self.w_vector[3,0],
+                            w5=self.w_vector[4,0],
+                            w6=self.w_vector[5,0])
+        db.put(data)
 
     def sigmoid(self, x):
         return 1 / (1 + exp(-x))

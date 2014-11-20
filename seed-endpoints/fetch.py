@@ -166,6 +166,7 @@ class Fetch(webapp2.RequestHandler):
             metrics: map of metrics type to values
         """
 
+
         all_devices = GcmCreds.all()
         all_devices.filter('email =', self.doctor_key)
         reg_ids = []
