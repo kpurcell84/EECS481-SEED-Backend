@@ -11,6 +11,14 @@ doctor['phone'] = '696-969-6969'
 doctor['hospital'] = 'Misty Mountains Hospital'
 doctor_list.append(doctor)
 
+doctor = {}
+doctor['email'] = 'dccorona@gmail.com'
+doctor['first_name'] = 'Dominic'
+doctor['last_name'] = 'Corona'
+doctor['phone'] = '248-622-7708'
+doctor['hospital'] = 'Detroit Mafia Medical Center'
+doctor_list.append(doctor)
+
 ### Patients ###
 patient_list = []
 

@@ -1,0 +1,92 @@
+Blood pressure:
+	Normal:
+		- 110-120/70-80
+	Sepsis:
+		- 80-100/50-70
+
+Body temp:
+	Normal:
+		- 97-99
+	Sepsis:
+		- 101.3-102.2
+
+GSR:
+	Normal:
+		- 0.05-0.15
+	Sepsis:
+		- 0.2-0.35
+		- Higher, indicated more sweating and more stress
+	Active:
+		- gsr += 0.25
+
+Skin Temp (at room temp):
+	Normal:
+		- 89.6-95
+	Sepsis:
+		- 68-79
+		- Colder
+	Active:
+		- skin temp += 10
+
+Heart Rate (resting):
+	Normal:
+		- 60-90
+	Sepsis:
+		- 90-120
+		- Faster
+	Active:
+		- heart rate += 50
+	Sleep:
+		- heart rate -= 20
+
+Sleep:
+	Normal:
+		- Light, Deep, Light, Rem, Light, Deep, Light, Rem, Light, Deep, Light, Rem, Light, Rem, Light, Light
+		- shown in 30 min increments according to regular sleep cycle graph
+	Sepsis:
+		- Less REM sleep
+		- More light sleep
+		- Fragmented sleep
+
+
+
+SOURCES
+
+National Center for Biotechnology Information:
+	http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3033193/
+	http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3213944/
+	http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3622444/
+	http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3485751/
+	http://www.ncbi.nlm.nih.gov/pubmed/2791542
+	http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3386730/
+
+Mayo Clinic:
+	http://www.mayoclinic.org/diseases-conditions/sepsis/basics/symptoms/con-20031900
+	http://www.mayoclinic.org/healthy-living/fitness/expert-answers/heart-rate/faq-20057979
+
+Other:
+	http://www.unm.edu/~lkravitz/Article%20folder/restingbp.html
+	http://drmirkin.com/fitness/8934.html
+	http://www.basicknowledge101.com/subjects/sleeping.html
+	http://www.win.tue.nl/stressatwork/pdfs/stressdetection_hacdais11.pdf
+
+
+
+REASONING
+
+- Hardcoded 3 fictional patients and 1 fictional doctor
+- One patient yes, one patient maybe, one patient no for sepsis
+
+- Researched normal metrics as well as sleep patterns
+- Researched sepsis metrics and combined them with knowledge from meeting with Dr. Cornell
+- Developed ranges of normal values, questionable values, and sepsis values
+- Randomly generate data within the ranges based on hardcoded patterns unique to each patient
+- Manually created sleep patterns representative of normal sleep and sepsis sleep
+- Adjusted quantitative data based on activity (sleep or passive or active)
+- Based on pattern during time of sleep, set sleep patterns accordingly
+
+- Made qualitative survey answers based on pattern
+
+- Generate alerts based on when they should be triggered based on patterns
+
+- Train classification algorithm with data
