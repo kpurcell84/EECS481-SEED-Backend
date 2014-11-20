@@ -1,6 +1,10 @@
 import webapp2
+
+import time
 from numpy import *
 from math import *
+from datetime import datetime, timedelta
+
 from google.appengine.ext import db
 from models import *
 
@@ -85,7 +89,9 @@ class Train(webapp2.RequestHandler):
         """
         Store weights into datastore
         """
-        data = ClassWeights(w1=self.w_vector[0,0],
+        self.cur_epoch = time.time()
+        data = ClassWeights(time_taken=datetime.fromtimestamp(self.cur_epoch)
+                            w1=self.w_vector[0,0],
                             w2=self.w_vector[1,0],
                             w3=self.w_vector[2,0],
                             w4=self.w_vector[3,0],

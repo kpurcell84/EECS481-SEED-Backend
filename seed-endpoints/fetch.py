@@ -8,10 +8,14 @@ import Cookie
 import json
 import time
 
+from datetime import datetime, timedelta
+from numpy import *
+from math import *
+
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
 from models import *
-from datetime import datetime, timedelta
+
 
 GCM_URL = 'https://android.googleapis.com/gcm/send'
 API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'

@@ -1,0 +1,42 @@
+Blood pressure:
+	Normal:
+		- 110-120/70-80
+	Sepsis:
+		- 80-100/50-70
+
+Body temp:
+	Normal:
+		- 97-99
+	Sepsis:
+		- 101.3-102.2
+
+GSR:
+	Normal:
+		- 0.05-0.15
+	Sepsis:
+		- 0.2-0.35
+		- Higher, indicated more sweating and more stress
+
+Skin Temp (at room temp):
+	Normal:
+		- 89.6-95
+	Sepsis:
+		- 68-79
+		- Colder
+
+Heart Rate (resting):
+	Normal:
+		- 60-90
+	Sepsis:
+		- 90-120
+		- Faster
+
+Sleep:
+	Normal:
+		- Light, Deep, Light, Rem, Light, Deep, Light, Rem, Light, Deep, Light, Rem, Light, Rem, Light, Light
+		- shown in 30 min increments according to regular sleep cycle graph
+	Sepsis:
+		- Less REM sleep
+		- More light sleep
+		- Fragmented sleep
+
