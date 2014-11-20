@@ -1,6 +1,6 @@
 # Sample data lists and dictionaries to be inserted in datastore
 
-# Doctors
+### Doctors ###
 doctor_list = []
 
 doctor = {}
@@ -11,7 +11,7 @@ doctor['phone'] = '696-969-6969'
 doctor['hospital'] = 'Misty Mountains Hospital'
 doctor_list.append(doctor)
 
-# Patients
+### Patients ###
 patient_list = []
 
 patient = {}
@@ -37,6 +37,17 @@ patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
 patient = {}
+patient['email'] = 'pippin@lotr.com'
+patient['doctor_email'] = 'strahald@gmail.com'
+patient['first_name'] = 'Peregrin'
+patient['last_name'] = 'Took'
+patient['phone'] = '555-555-5555'
+patient['diagnosis'] = 'Maybe'
+patient['septic_risk'] = -1
+patient['basis_pass'] = 'password'
+patient_list.append(patient)
+
+patient = {}
 patient['email'] = 'seedsystem00@gmail.com'
 patient['doctor_email'] = 'strahald@gmail.com'
 patient['first_name'] = 'Andy'
@@ -47,7 +58,36 @@ patient['septic_risk'] = -1
 patient['basis_pass'] = 'eecs481seed'
 patient_list.append(patient)
 
-# PQuantData
+### PQuantData ###
+# The following measurements represent ranges of values for both 
+# septic patients and normal patients.  Values come from multiple
+# sources of research
+
+# Blood Pressure
+sbp_low = [110, 95, 80]
+dbp_low = [70, 60, 50]
+sbp_high = [120, 110, 100]
+dbp_high = [80, 75, 70]
+# Body Temp
+bt_low = [97.0, 99.0, 101.3]
+bt_high = [99.0, 100.5, 102.2]
+# GSR
+gsr_low = [0.00, 0.15, 0.2]
+gsr_high = [0.10, 0.25, 0.35]
+# Skin Temp
+st_low = [89.6, 79.4, 68.0]
+st_high = [95.0, 87.0, 79.0]
+# Heart Rate
+hr_low = [60, 75, 90]
+hr_high = [90, 105, 120]
+# Air Temp (room temp)
+at_low = 68.0
+at_high = 73.0
+# Sleep patterns
+sleep_list = [['Light', 'Deep', 'Light', 'Rem', 'Light', 'Deep', 'Light', 'Rem', 'Light', 'Deep', 'Light', 'Rem', 'Light', 'Rem', 'Light', 'Light'],
+	['Still', 'Light', 'Light', 'Deep', 'Light', 'Light', 'Light', 'Still', 'Light', 'Light', 'Rem', 'Light', 'Light', 'Deep', 'Light', 'Still'],
+	['Still', 'Still', 'Light', 'Light', 'Still', 'Light', 'Rem', 'Light', 'Light', 'Deep', 'Light', 'Still', 'Light', 'Light', 'Still', 'Still']]
+
 active_list = []
 for i in range(70):
 	active_list.append('Still')
@@ -58,15 +98,7 @@ for i in range(5):
 for i in range(5):
 	active_list.append('Bike')
 
-sleep_list = []
-for i in range(30):
-	sleep_list.append('Rem')
-for i in range(40):
-	sleep_list.append('Light')
-for i in range(30):
-	sleep_list.append('Deep')
-
-# Watson
+### Watson ###
 watson_list = []
 
 qa_pair = {}
