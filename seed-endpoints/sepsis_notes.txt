@@ -16,6 +16,8 @@ GSR:
 	Sepsis:
 		- 0.2-0.35
 		- Higher, indicated more sweating and more stress
+	Active:
+		- gsr += 0.25
 
 Skin Temp (at room temp):
 	Normal:
@@ -23,6 +25,8 @@ Skin Temp (at room temp):
 	Sepsis:
 		- 68-79
 		- Colder
+	Active:
+		- skin temp += 10
 
 Heart Rate (resting):
 	Normal:
@@ -30,6 +34,10 @@ Heart Rate (resting):
 	Sepsis:
 		- 90-120
 		- Faster
+	Active:
+		- heart rate += 50
+	Sleep:
+		- heart rate -= 20
 
 Sleep:
 	Normal:

@@ -126,6 +126,8 @@ def generate_quant_data():
                 if activity_type == 'Bike' or activity_type == 'Run':
                     # Adjust heart rate to account for being active
                     heart_rate += 50
+                    gsr += 
+                    skin_temp += 10
 
             random_datum = PQuantData(patient=patient,
                                 time_taken=time_taken,
