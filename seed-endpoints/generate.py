@@ -173,6 +173,10 @@ def generate_qual_data():
 
         for i in range(num_inserts):
             time_taken = start_time + timedelta(minutes=i*frequency)
+            # % of Yes answers depends on pattern:
+            # Sepsis No = 10% Yes
+            # Sepsis Maybe = 50% Yes
+            # Sepsis Yes = 90% Yes
             vals = ["No"]*10
             if pattern[i] == 0:
                 vals[0] = "Yes"
