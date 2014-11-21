@@ -81,7 +81,7 @@ def generate_quant_data():
 
         timediff = int(d2_ts-d1_ts) / 60
         # Total number of entries per patient
-        num_inserts = timediff / frequency        
+        num_inserts = timediff / frequency
 
         pattern = get_pattern(patient, num_inserts)
         sp = 0
@@ -91,11 +91,15 @@ def generate_quant_data():
             time_taken = start_time + timedelta(minutes=i*frequency)
             p = pattern[i]
 
-            sys_blood_pressure = randrange(sbp_low[p], sbp_high[p])
-            dia_blood_pressure = randrange(dbp_low[p], dbp_high[p])
-            blood_pressure = str(sys_blood_pressure) + "/" + str(dia_blood_pressure)
+            blood_pressure = None
+            body_temp = None
+            # Only set manual metrics if time is 9am or 9pm
+            if ((time_taken.hour == 9 or time_taken.hour == 21) and time_taken.minute == 0):
+                sys_blood_pressure = randrange(sbp_low[p], sbp_high[p])
+                dia_blood_pressure = randrange(dbp_low[p], dbp_high[p])
+                blood_pressure = str(sys_blood_pressure) + "/" + str(dia_blood_pressure)
 
-            body_temp = round(uniform(bt_low[p], bt_high[p]), 1)
+                body_temp = round(uniform(bt_low[p], bt_high[p]), 1)
 
             gsr = round(uniform(gsr_low[p], gsr_high[p]), 5)
 
@@ -126,6 +130,8 @@ def generate_quant_data():
                 if activity_type == 'Bike' or activity_type == 'Run':
                     # Adjust heart rate to account for being active
                     heart_rate += 50
+                    gsr += 0.25
+                    skin_temp += 10
 
             random_datum = PQuantData(patient=patient,
                                 time_taken=time_taken,
@@ -151,8 +157,8 @@ def generate_qual_data():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        start_time = datetime.strptime('2000-01-01T00:00:00', fmt)
-        end_time = datetime.strptime('2000-01-04T00:00:00', fmt)
+        start_time = datetime.strptime('2000-01-01T18:00:00', fmt)
+        end_time = datetime.strptime('2000-01-04T18:00:00', fmt)
 
         # convert to unix timestamp
         d1_ts = time.mktime(start_time.timetuple())
@@ -163,19 +169,32 @@ def generate_qual_data():
         timediff = int(d2_ts-d1_ts) / 60
         num_inserts = timediff / frequency
 
+        pattern = get_pattern(patient, num_inserts)
+
         for i in range(num_inserts):
             time_taken = start_time + timedelta(minutes=i*frequency)
-            vals = ['Yes', 'No']
-            a1 = vals[randrange(0, 2)]
-            a2 = vals[randrange(0, 2)]
-            a3 = vals[randrange(0, 2)]
-            a4 = vals[randrange(0, 2)]
-            a5 = vals[randrange(0, 2)]
-            a6 = vals[randrange(0, 2)]
-            a7 = vals[randrange(0, 2)]
-            a8 = vals[randrange(0, 2)]
-            a9 = vals[randrange(0, 2)]
-            a10 = vals[randrange(0, 2)]
+            # % of Yes answers depends on pattern:
+            # Sepsis No = 10% Yes
+            # Sepsis Maybe = 50% Yes
+            # Sepsis Yes = 90% Yes
+            vals = ["No"]*10
+            if pattern[i] == 0:
+                vals[0] = "Yes"
+            elif pattern[i] == 1:
+                vals[0:5] = ["Yes"]*5
+            elif pattern[i] == 2:
+                vals[1:10] = ["Yes"]*9
+
+            a1 = vals[0]
+            a2 = vals[1]
+            a3 = vals[2]
+            a4 = vals[3]
+            a5 = vals[4]
+            a6 = vals[5]
+            a7 = vals[6]
+            a8 = vals[7]
+            a9 = vals[8]
+            a10 = vals[9]
 
             random_datum = PQualData(patient=patient,
                                 time_taken=time_taken,
@@ -186,7 +205,7 @@ def generate_qual_data():
                                 a9=a9, a10=a10)
             random_data.append(random_datum)
 
-    # db.put(random_data)
+    db.put(random_data)
 
 def generate_alerts():
     random_data = []
@@ -199,25 +218,58 @@ def generate_alerts():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        time_alerted = datetime.strptime('2000-01-01T00:00:00', fmt)
+        start_time = datetime.strptime('2000-01-01T08:00:00', fmt)
+        end_time = datetime.strptime('2000-01-04T08:00:00', fmt)
+
+        # convert to unix timestamp
+        d1_ts = time.mktime(start_time.timetuple())
+        d2_ts = time.mktime(end_time.timetuple())
+
+        # Frequency of entries in minutes
+        frequency = 30
+
+        timediff = int(d2_ts-d1_ts) / 60
+        # Total number of entries per patient
+        num_inserts = timediff / frequency
+
+        time_alerted = start_time
         
-        for i in range(5):
-            time_alerted = time_alerted + timedelta(hours=3)
-            message = None
-            priority = None
-            if i < 3:
-                message = "You may be at risk of sepsis, please contact your doctor"
-                priority = 'Early'
-            else:
-                message = "You are at serious risk of sepsis, please contact your doctor immediately"
-                priority = 'Emergency'
+        pattern = get_pattern(patient, num_inserts)
 
-            random_alert = Alert(patient=patient,
+        message_early = "You may be at risk of sepsis, please contact your doctor"
+        message_emerg = "You are at serious risk of sepsis, please contact your doctor immediately"
+
+        # Iteratate through pattern and find spots to trigger an alert
+        # 4 consecutive maybe = early alert
+        # 2 consecutive yes = emergency alert
+        count1 = 0
+        count2 = 0
+        for i in range(num_inserts):
+            time_alerted += timedelta(minutes=30)
+            if pattern[i] == 0:
+                count1 = 0
+                count2 = 0
+            elif pattern[i] == 1:
+                count1 += 1
+            elif pattern[i] == 2:
+                count2 += 1
+
+            if count1 == 8:
+                alert = Alert(patient=patient,
                                  time_alerted=time_alerted,
-                                 message=message,
-                                 priority=priority)
-
-            random_data.append(random_alert)
+                                 message=message_early,
+                                 priority='Early')
+                random_data.append(alert)
+                count1 = 0
+                count2 = 0
+            elif count2 == 4:
+                alert = Alert(patient=patient,
+                                 time_alerted=time_alerted,
+                                 message=message_emerg,
+                                 priority='Emergency')
+                random_data.append(alert)
+                count1 = 0
+                count2 = 0
 
     db.put(random_data)
 
@@ -248,7 +300,7 @@ def generate_sample_data():
     generate_patients()
     time.sleep(2)
     generate_quant_data()
-    # generate_qual_data()
-    # generate_alerts()
+    generate_qual_data()
+    generate_alerts()
     # generate_watson_questions()
     # generate_gcm_creds()

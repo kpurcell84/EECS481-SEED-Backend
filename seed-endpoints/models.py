@@ -337,6 +337,7 @@ class GcmCreds(db.Model):
         return
 
 class ClassWeights(db.Model):
+    time_taken = db.DateTimeProperty(required=True)
     w1 = db.FloatProperty(required=True)
     w2 = db.FloatProperty(required=True)
     w3 = db.FloatProperty(required=True)
