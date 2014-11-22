@@ -11,6 +11,7 @@ import time
 from datetime import datetime, timedelta
 from numpy import *
 from math import *
+from classification import *
 
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
@@ -22,30 +23,30 @@ API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 
 class Fetch(webapp2.RequestHandler):
     patient_key = 'seedsystem00@gmail.com'
-    doctor_key = 'strahald@gmail.com'
     export_offset = 0
     margin_of_error = 3000 #in seconds
+    mid_priority_threshold = 0.5
+    high_priority_threshold = 0.7
 
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
 
         self.cur_epoch = time.time() - self.margin_of_error
-        self.export_date = time.strftime(
-            "%Y-%m-%d",
-            time.localtime(self.cur_epoch))
 
-        all_patients = Patient.all()
-        all_patients.filter(
-            '__key__ =', 
-            Key.from_path('Patient', self.patient_key))
-        patient = all_patients.get()
-
+        patient = Patient.get_patient(self.patient_key)
         username = patient.key().name()
         password = patient.basis_pass
         self.login(username, password)
-        data = self.get_metrics(patient)
-        self.store_data(patient, data)
-        self.check_data(data)
+
+        for i in range(0,29):
+            self.export_date = time.strftime(
+                "%Y-%m-%d",
+                time.localtime(self.cur_epoch - (i * 60)))
+            data = self.get_metrics(patient)
+            if data != None:
+                self.store_data(patient, data)
+                self.check_data(patient, data)
+                return
 
     def login(self, username, password):
         """
@@ -117,15 +118,14 @@ class Fetch(webapp2.RequestHandler):
         metrics['heart_rate'] = data['metrics']['heartrate']['values'][index]
         metrics['skin_temp'] = data['metrics']['skin_temp']['values'][index]
 
-        empty_data = True
+        empty_data = False
         for key in metrics:
-            if metrics[key] is not None:
-                empty_data = False
+            if metrics[key] is None:
+                empty_data = True
 
         metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
         if empty_data:
-            metrics['activity'] = None
-            return metrics
+            return None
 
         url = 'https://app.mybasis.com/api/v2/users/me/days/' \
             + self.export_date + '/activities?' \
@@ -138,7 +138,7 @@ class Fetch(webapp2.RequestHandler):
             for stage in activity['stages']:
                 start_time = stage['start_time']['timestamp']
                 end_time = stage['end_time']['timestamp']
-                if self.cur_epoch >= start_time and self.cur_epoch < end_time:
+                if self.cur_epoch >= start_time and self.cur_epoch <= end_time:
                     is_active = True
                     metrics['activity'] = stage['type'].title()
 
@@ -151,7 +151,7 @@ class Fetch(webapp2.RequestHandler):
             for activity in data['content']['activities']:
                 start_time = activity['start_time']['timestamp']
                 end_time = activity['end_time']['timestamp']
-                if self.cur_epoch >= start_time and self.cur_epoch < end_time:
+                if self.cur_epoch >= start_time and self.cur_epoch <= end_time:
                     is_active = True
                     metrics['activity'] = activity['type'].title()
 
@@ -161,7 +161,7 @@ class Fetch(webapp2.RequestHandler):
         metrics['time'] = datetime.fromtimestamp(self.cur_epoch)
         return metrics
 
-    def check_data(self, metrics):
+    def check_data(self, patient, metrics):
         """
         Checks if the fetched metrics indicates sepsis and triggers
         appropriate alerts
@@ -169,17 +169,85 @@ class Fetch(webapp2.RequestHandler):
         Args:
             metrics: map of metrics type to values
         """
+        weights = ClassWeights.get_recent_weights()
+        manual_data = PQuantData.get_recent_manual_data(patient)
+        parsed_blood_pressure = manual_data.blood_pressure.split('/',1)
+        systolic = float(parsed_blood_pressure[0])
+        diastolic = float(parsed_blood_pressure[1])
+        
+        if metrics['activity'] == 'Run' or metrics['activity'] == 'Bike':
+            features = matrix([[
+                systolic,
+                diastolic,
+                manual_data.body_temp,
+                0,
+                metrics['gsr'],
+                0,
+                quant_data.skin_temp,
+                0,
+                metrics['heart_rate'],
+                0
+            ]])
+        elif metrics['activity'] == 'Rem' or metrics['activity'] == 'Light' or metrics['activity'] == 'Deep':
+            features = matrix([[
+                systolic,
+                diastolic,
+                manual_data.body_temp,
+                metrics['gsr'],
+                0,
+                metrics['skin_temp'],
+                0,
+                0,
+                0,
+                metrics['heart_rate']
+            ]])
+        else:
+            features = matrix([[
+                systolic,
+                diastolic,
+                manual_data.body_temp,
+                metrics['gsr'],
+                0,
+                metrics['skin_temp'],
+                0,
+                metrics['heart_rate'],
+                0,
+                0
+            ]])
 
+        probability = classify(features, weights)
 
-        all_devices = GcmCreds.all()
-        all_devices.filter('email =', self.doctor_key)
-        reg_ids = []
-        for device in all_devices:
-            reg_ids.append(device.reg_id)
-        self.trigger_alert(reg_ids)
+        if probability < 0.5:
+            return
+
+        doctor = patient.doctor
+        
+        if probability < 0.75:
+            message = {
+                'message': 'Patient "' \
+                          + patient.first_name + ' ' \
+                          + patient.last_name + ' shows some indications of sepsis.'
+            }
+        else:
+            message = {
+                'message': 'Your health data shows HIGH indications of sepsis. ' \
+                         + 'Please contact doctor immediately.'
+            }
+            reg_ids = GcmCreds.get_reg_ids(patient.key().name())
+            self.trigger_alert(reg_ids, message)
+            message = {
+                'message': 'Patient "' \
+                          + patient.first_name + ' ' \
+                          + patient.last_name + ' shows HIGH indications of sepsis.'
+            }
+        reg_ids = GcmCreds.get_reg_ids(doctor.key().name())
+        self.trigger_alert(reg_ids, message)
+
+        #reg_ids.append("APA91bHJ952iglrH8_cGY0OHu4UfA1DosW2o9ZwXT8Ki8YnHmpr5Y7SoRnwRgJZ3RCn37j_Fw3QbyHQYFmbatHqVgPi7mlO0m1JyExwXglgBW8H1mbeJmKF6KjwCwTvbse4NoyP8gGQI29zGy_Vk7Y9VQd6dPYj5ogcdETGYh4UYBFBWuWgWKwA")
+
         return
 
-    def trigger_alert(self, reg_ids):
+    def trigger_alert(self, reg_ids, data):
         """
         Triggers alert to doctor and optionally to patient
 
@@ -191,7 +259,8 @@ class Fetch(webapp2.RequestHandler):
             'Content-Type': 'application/json'
         }
         payload = {
-            'registration_ids': reg_ids
+            'registration_ids': reg_ids,
+            'data': data
         }
         payload = json.dumps(payload)
         result = urlfetch.fetch(
