@@ -38,7 +38,7 @@ class Fetch(webapp2.RequestHandler):
         password = patient.basis_pass
         self.login(username, password)
 
-        for i in range(0,29):
+        for i in range(0,30):
             self.cur_epoch -= (i * 60)
             self.export_date = time.strftime(
                 "%Y-%m-%d",
@@ -227,12 +227,21 @@ class Fetch(webapp2.RequestHandler):
         doctor = patient.doctor
         
         if probability < self.high_priority_threshold:
+            alert = Alert(patient=patient,
+                        time_alerted=datetime.fromtimestamp(time.time())
+                        priority='Early')
+            alert.put()
             message = {
                 'message': 'Patient "' \
                           + patient.first_name + ' ' \
                           + patient.last_name + ' shows some indications of sepsis.'
             }
+
         else:
+            alert = Alert(patient=patient,
+                        time_alerted=datetime.fromtimestamp(time.time())
+                        priority='Emergency')
+            alert.put()
             message = {
                 'message': 'Your health data shows HIGH indications of sepsis. ' \
                          + 'Please contact doctor immediately.'

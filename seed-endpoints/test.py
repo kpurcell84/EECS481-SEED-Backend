@@ -22,7 +22,9 @@ class Test(webapp2.RequestHandler):
             data = get_feature_matrix(p)
             if data is not None:
                 prob = classify(data, self.w_vector)
-                self.response.write(p.first_name + ' ' + p.last_name + ': ' + str(prob) + '\n')
+                self.response.write(p.first_name + ' ' + p.last_name + ':\n')
+                self.response.write(prob)
+                self.response.write('\n')
 
 
 APPLICATION = webapp2.WSGIApplication([

@@ -44,21 +44,26 @@ def get_feature_matrix(patient):
     all_quant_data = PQuantData.get_patient_data(patient)
 
     # Look for first logged data of blood pressure and body temperature
-    contain_blood_pressure = False
-    contain_body_temp = False
-    for quant_data in all_quant_data:
-        if quant_data.blood_pressure != None and not contain_blood_pressure:
-            parsed_blood_pressure = quant_data.blood_pressure.split('/',1)
-            systolic = float(parsed_blood_pressure[0])
-            diastolic = float(parsed_blood_pressure[1])
-            contain_blood_pressure = True
-        if quant_data.body_temp != None and not contain_body_temp:
-            body_temp = quant_data.body_temp
-            contain_body_temp = True
-        if contain_blood_pressure and contain_body_temp:
-            break
-    if not contain_blood_pressure or not contain_body_temp:
-        return None
+    if patient.key().name() == 'seedsystem00@gmail.com':
+        systolic = 120.0
+        diastolic = 80.0
+        body_temp = 98.3
+    else:
+        contain_blood_pressure = False
+        contain_body_temp = False
+        for quant_data in all_quant_data:
+            if quant_data.blood_pressure != None and not contain_blood_pressure:
+                parsed_blood_pressure = quant_data.blood_pressure.split('/',1)
+                systolic = float(parsed_blood_pressure[0])
+                diastolic = float(parsed_blood_pressure[1])
+                contain_blood_pressure = True
+            if quant_data.body_temp != None and not contain_body_temp:
+                body_temp = quant_data.body_temp
+                contain_body_temp = True
+            if contain_blood_pressure and contain_body_temp:
+                break
+        if not contain_blood_pressure or not contain_body_temp:
+            return None
 
     # Create feature matrix
     for quant_data in all_quant_data:
@@ -130,4 +135,4 @@ def classify(feature_matrix, w_vector):
         count += 1
         y[...] = sigmoid(y)
     average_prob /= count
-    return average_prob
+    return y_vector
