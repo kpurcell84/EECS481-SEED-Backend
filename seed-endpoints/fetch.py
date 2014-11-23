@@ -5,7 +5,6 @@ Fetches patient data from Basis Health Tracker and stores it into database
 import webapp2
 import urllib
 import Cookie
-import json
 import time
 
 from datetime import datetime, timedelta
@@ -16,10 +15,6 @@ from classification import *
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
 from models import *
-
-
-GCM_URL = 'https://android.googleapis.com/gcm/send'
-API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 
 class Fetch(webapp2.RequestHandler):
     patient_key = 'seedsystem00@gmail.com'
@@ -260,46 +255,9 @@ class Fetch(webapp2.RequestHandler):
                           + patient.last_name + ' shows HIGH indications of sepsis.'
             }
         reg_ids = GcmCreds.get_reg_ids(doctor.key().name())
-        self.trigger_alert(reg_ids, message)
-
         #reg_ids.append("APA91bHJ952iglrH8_cGY0OHu4UfA1DosW2o9ZwXT8Ki8YnHmpr5Y7SoRnwRgJZ3RCn37j_Fw3QbyHQYFmbatHqVgPi7mlO0m1JyExwXglgBW8H1mbeJmKF6KjwCwTvbse4NoyP8gGQI29zGy_Vk7Y9VQd6dPYj5ogcdETGYh4UYBFBWuWgWKwA")
+        trigger_alert(reg_ids, message)
 
-        return
-
-    def trigger_alert(self, reg_ids, data):
-        """
-        Triggers alert to doctor and optionally to patient
-
-        Args:
-            reg_ids: Array of device tokens to send alerts to
-        """
-        headers = {
-            'Authorization': 'key=%s' % API_KEY,
-            'Content-Type': 'application/json'
-        }
-        payload = {
-            'registration_ids': reg_ids,
-            'data': data
-        }
-        payload = json.dumps(payload)
-        result = urlfetch.fetch(
-            url=GCM_URL,
-            method=urlfetch.POST,
-            payload= payload,
-            headers=headers,
-            follow_redirects=False)
-        if result.status_code == 200:
-            decoded = json.loads(result.content)
-            self.response.write("Request successfully transferred\n")
-            self.response.write(decoded)
-        elif result.status_code == 400:
-            self.response.write("The request could not be parsed as JSON\n")
-        elif result.status_code == 401:
-            self.response.write("There was an error authenticating the sender account\n")
-        elif result.status_code == 503:
-            self.response.write("GCM service is unavailable\n")
-        else:
-            self.response.write("GCM service error: %d\n" % result.status_code)
         return
 
     def store_data(self, patient, metrics):

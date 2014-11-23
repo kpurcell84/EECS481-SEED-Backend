@@ -1,3 +1,6 @@
+import json
+
+from google.appengine.api import urlfetch
 from google.appengine.ext import db
 from models import *
 
@@ -7,6 +10,8 @@ from math import *
 # Helper functions for classification algorithm
 
 NUM_FEATURES = 10
+GCM_URL = 'https://android.googleapis.com/gcm/send'
+API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 
 """
 Features:
@@ -131,3 +136,38 @@ def classify(feature_matrix, w_vector):
         y[...] = sigmoid(y)
     average_prob /= count
     return y_vector
+
+def trigger_alert(reg_ids, data):
+    """
+    Triggers alert to doctor and optionally to patient
+
+    Args:
+        reg_ids: Array of device tokens to send alerts to
+    """
+    headers = {
+        'Authorization': 'key=%s' % API_KEY,
+        'Content-Type': 'application/json'
+    }
+    payload = {
+        'registration_ids': reg_ids,
+        'data': data
+    }
+    payload = json.dumps(payload)
+    result = urlfetch.fetch(
+        url=GCM_URL,
+        method=urlfetch.POST,
+        payload= payload,
+        headers=headers,
+        follow_redirects=False)
+    if result.status_code == 200:
+        decoded = json.loads(result.content)
+        return decoded
+    elif result.status_code == 400:
+        msg = "The request could not be parsed as JSON\n"
+    elif result.status_code == 401:
+        msg = "There was an error authenticating the sender account\n"
+    elif result.status_code == 503:
+        msg = "GCM service is unavailable\n"
+    else:
+        msg = "GCM service error: %d\n" % result.status_code
+    return msg
