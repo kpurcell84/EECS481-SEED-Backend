@@ -291,6 +291,8 @@ class Alert(db.Model):
         Turns the Alert entity into a ProtoRPC object. 
         """
         return AlertResponse(patient_email=self.patient.key().name(),
+                             first_name=self.patient.first_name,
+                             last_name=self.patient.last_name,
                              time_alerted=self.time_alerted,
                              priority=self.priority)
 
