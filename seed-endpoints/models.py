@@ -9,6 +9,8 @@ from google.appengine.api.datastore import Key
 
 from messages import *
 
+from numpy import *
+
 class Doctor(db.Model):
     first_name = db.StringProperty(required=True)
     last_name = db.StringProperty(required=True)
@@ -112,6 +114,19 @@ class Patient(db.Model):
         new_patient.put()
         return new_patient
 
+    @classmethod
+    def get_patient(cls, email):
+        """
+        Gets patient data
+
+        Args:
+            email: Patient e-mail address
+        Returns:
+            The Patient entity with corresponsing e-mail address
+        """
+        p = cls.all()
+        p.filter('__key__ =', Key.from_path('Patient', email))
+        return p.get()
 
 class PQuantData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
@@ -154,6 +169,38 @@ class PQuantData(db.Model):
 
         return PQuantDataListResponse(pdata_list=pdata_list)
 
+    @classmethod
+    def get_patient_data(cls, patient):
+        """
+        Gets all quantitative data of specific patient in increasing time order
+
+        Args:
+            patient: A Patient entity
+        Returns:
+            A List of all quantitative data of patient
+        """
+        q = cls.all()
+        q.filter('patient =', patient)
+        q.order('time_taken')
+        return q
+
+    @classmethod
+    def get_recent_manual_data(cls, patient):
+        """
+        Gets most recently logged blood pressure and heart rate
+
+        Args:
+            patient: A Patient entity
+        Returns:
+            A data point with most recent blood pressure and heart rate
+        """
+        q_all = cls.all()
+        q_all.filter('patient =', patient)
+        q_all.order('-time_taken')
+        for q in q_all:
+            if q.blood_pressure is not None:
+                return q
+        return None
 
 class PQualData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
@@ -336,6 +383,15 @@ class GcmCreds(db.Model):
         new_creds.put()
         return
 
+    @classmethod
+    def get_reg_ids(cls, email):
+        all_devices = cls.all()
+        all_devices.filter('email =', email)
+        reg_ids = []
+        for device in all_devices:
+            reg_ids.append(device.reg_id)
+        return reg_ids
+
 class ClassWeights(db.Model):
     time_taken = db.DateTimeProperty(required=True)
     w1 = db.FloatProperty(required=True)
@@ -344,3 +400,32 @@ class ClassWeights(db.Model):
     w4 = db.FloatProperty(required=True)
     w5 = db.FloatProperty(required=True)
     w6 = db.FloatProperty(required=True)
+    w7 = db.FloatProperty(required=True)
+    w8 = db.FloatProperty(required=True)
+    w9 = db.FloatProperty(required=True)
+    w10 = db.FloatProperty(required=True)
+
+    @classmethod
+    def get_recent_weights(cls):
+        """
+        Gets most recently stored weights
+
+        Returns:
+            A vector of most recent weights
+        """
+        w = cls.all()
+        w.order('-time_taken')
+        weights = w.get()
+        w_vector = matrix([
+            [weights.w1],
+            [weights.w2],
+            [weights.w3],
+            [weights.w4],
+            [weights.w5],
+            [weights.w6],
+            [weights.w7],
+            [weights.w8],
+            [weights.w9],
+            [weights.w10]
+        ])
+        return w_vector
