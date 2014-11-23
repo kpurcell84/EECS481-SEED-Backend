@@ -46,6 +46,7 @@ class Fetch(webapp2.RequestHandler):
             data = self.get_metrics(patient)
             if data != None:
                 self.response.write(data)
+                self.response.write('\n')
                 self.store_data(patient, data)
                 self.check_data(patient, data)
                 return
@@ -178,12 +179,13 @@ class Fetch(webapp2.RequestHandler):
         parsed_blood_pressure = manual_data.blood_pressure.split('/',1)
         systolic = float(parsed_blood_pressure[0])
         diastolic = float(parsed_blood_pressure[1])
+        body_temp = manual_data.body_temp
         
         if metrics['activity'] == 'Run' or metrics['activity'] == 'Bike':
             features = matrix([[
                 systolic,
                 diastolic,
-                manual_data.body_temp,
+                body_temp,
                 0,
                 metrics['gsr'],
                 0,
@@ -196,7 +198,7 @@ class Fetch(webapp2.RequestHandler):
             features = matrix([[
                 systolic,
                 diastolic,
-                manual_data.body_temp,
+                body_temp,
                 metrics['gsr'],
                 0,
                 metrics['skin_temp'],
@@ -209,7 +211,7 @@ class Fetch(webapp2.RequestHandler):
             features = matrix([[
                 systolic,
                 diastolic,
-                manual_data.body_temp,
+                body_temp,
                 metrics['gsr'],
                 0,
                 metrics['skin_temp'],
@@ -221,6 +223,10 @@ class Fetch(webapp2.RequestHandler):
 
         probability = classify(features, weights)
 
+        self.response.write('Probability of having Sepsis: ')
+        self.response.write(probability)
+        self.response.write('\n')
+
         if probability < self.mid_priority_threshold:
             return
 
@@ -228,7 +234,7 @@ class Fetch(webapp2.RequestHandler):
         
         if probability < self.high_priority_threshold:
             alert = Alert(patient=patient,
-                        time_alerted=datetime.fromtimestamp(time.time())
+                        time_alerted=datetime.fromtimestamp(time.time()),
                         priority='Early')
             alert.put()
             message = {
@@ -239,7 +245,7 @@ class Fetch(webapp2.RequestHandler):
 
         else:
             alert = Alert(patient=patient,
-                        time_alerted=datetime.fromtimestamp(time.time())
+                        time_alerted=datetime.fromtimestamp(time.time()),
                         priority='Emergency')
             alert.put()
             message = {
@@ -316,7 +322,6 @@ class Fetch(webapp2.RequestHandler):
                         heart_rate=metrics['heart_rate'],
                         activity_type=metrics['activity'])
             data.put()
-            self.response.write("Success\n")
             return True
 
 APPLICATION = webapp2.WSGIApplication([
