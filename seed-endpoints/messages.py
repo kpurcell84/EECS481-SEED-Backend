@@ -137,7 +137,7 @@ class UserCheckResponse(Message):
     """ ProtoRPC message definition to represent a response about the type of user type = (Patient | Doctor | None) """
     user_type = StringField(1, required=True)
 
-class AlertRequest(Message):
+class AlertTestRequest(Message):
     """ ProtoRPC message definition to represent a request to trigger a fake alert for testing/demo purposes """
     patient_email = StringField(1, required=True)
     septic_risk = FloatField(2, required=True)

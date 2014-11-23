@@ -7,6 +7,7 @@ from datetime import datetime
 from models import *
 from generate import generate_sample_data
 from messages import *
+from classification import trigger_alert
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
@@ -355,7 +356,7 @@ class SeedApi(remote.Service):
         generate_sample_data()
         return message_types.VoidMessage()
 
-    @endpoints.method(AlertTest, 
+    @endpoints.method(AlertTestRequest, 
                       message_types.VoidMessage,
                       path='alert_test', http_method='POST',
                       name='alert_test.get')
@@ -363,7 +364,7 @@ class SeedApi(remote.Service):
         """
         Exposes an API endpoint to trigger an alert
         """
-        trigger_alert(request.email, request.septic_risk)
+        trigger_alert(request.patient_email, request.septic_risk)
         return message_types.VoidMessage()
 
 

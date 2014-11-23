@@ -29,7 +29,7 @@ patient['first_name'] = 'Frodo'
 patient['last_name'] = 'Baggins'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'Yes'
-patient['septic_risk'] = -1
+patient['septic_risk'] = -1.0
 patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
@@ -40,7 +40,7 @@ patient['first_name'] = 'Samwise'
 patient['last_name'] = 'Gamgee'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'No'
-patient['septic_risk'] = -1
+patient['septic_risk'] = -1.0
 patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
@@ -51,7 +51,7 @@ patient['first_name'] = 'Peregrin'
 patient['last_name'] = 'Took'
 patient['phone'] = '555-555-5555'
 patient['diagnosis'] = 'Maybe'
-patient['septic_risk'] = -1
+patient['septic_risk'] = -1.0
 patient['basis_pass'] = 'password'
 patient_list.append(patient)
 
@@ -62,7 +62,7 @@ patient['first_name'] = 'Andy'
 patient['last_name'] = 'Lee'
 patient['phone'] = '734-834-9095'
 patient['diagnosis'] = 'No'
-patient['septic_risk'] = -1
+patient['septic_risk'] = -1.0
 patient['basis_pass'] = 'eecs481seed'
 patient_list.append(patient)
 
