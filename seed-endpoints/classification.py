@@ -140,7 +140,7 @@ def classify(feature_matrix, w_vector):
         count += 1
         y[...] = sigmoid(y)
     average_prob /= count
-    return y_vector
+    return average_prob
 
 def trigger_alert(email, probability):
     if probability < EARLY_THRESHOLD:

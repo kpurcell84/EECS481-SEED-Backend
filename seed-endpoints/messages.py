@@ -24,7 +24,7 @@ class PatientPut(Message):
     phone = StringField(4, required=True)
     doctor_email = StringField(5, required=True)
     diagnosis = StringField(6)
-    septic_risk = IntegerField(7)
+    septic_risk = FloatField(7)
     basis_pass = StringField(8, required=True)
 
 class PatientListResponse(Message):
@@ -136,3 +136,8 @@ class EmailRequest(Message):
 class UserCheckResponse(Message):
     """ ProtoRPC message definition to represent a response about the type of user type = (Patient | Doctor | None) """
     user_type = StringField(1, required=True)
+
+class AlertRequest(Message):
+    """ ProtoRPC message definition to represent a request to trigger a fake alert for testing/demo purposes """
+    patient_email = StringField(1, required=True)
+    septic_risk = FloatField(2, required=True)
