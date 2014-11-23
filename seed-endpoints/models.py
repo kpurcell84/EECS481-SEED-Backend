@@ -194,11 +194,13 @@ class PQuantData(db.Model):
         Returns:
             A data point with most recent blood pressure and heart rate
         """
-        q = cls.all()
-        q.filter('patient =', patient)
-        q.filter('blood_pressure !=', None)
-        q.order('-time_taken')
-        return q.get()
+        q_all = cls.all()
+        q_all.filter('patient =', patient)
+        q_all.order('-time_taken')
+        for q in q_all:
+            if q.blood_pressure is not None:
+                return q
+        return None
 
 class PQualData(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)

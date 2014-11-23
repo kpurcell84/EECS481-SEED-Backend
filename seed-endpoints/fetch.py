@@ -24,9 +24,9 @@ API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 class Fetch(webapp2.RequestHandler):
     patient_key = 'seedsystem00@gmail.com'
     export_offset = 0
-    margin_of_error = 3000 #in seconds
+    margin_of_error = 15 * 60 #in seconds
     mid_priority_threshold = 0.5
-    high_priority_threshold = 0.7
+    high_priority_threshold = 0.75
 
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
@@ -39,11 +39,13 @@ class Fetch(webapp2.RequestHandler):
         self.login(username, password)
 
         for i in range(0,29):
+            self.cur_epoch -= (i * 60)
             self.export_date = time.strftime(
                 "%Y-%m-%d",
-                time.localtime(self.cur_epoch - (i * 60)))
+                time.localtime(self.cur_epoch))
             data = self.get_metrics(patient)
             if data != None:
+                self.response.write(data)
                 self.store_data(patient, data)
                 self.check_data(patient, data)
                 return
@@ -171,6 +173,8 @@ class Fetch(webapp2.RequestHandler):
         """
         weights = ClassWeights.get_recent_weights()
         manual_data = PQuantData.get_recent_manual_data(patient)
+        if manual_data == None:
+            return
         parsed_blood_pressure = manual_data.blood_pressure.split('/',1)
         systolic = float(parsed_blood_pressure[0])
         diastolic = float(parsed_blood_pressure[1])
@@ -217,12 +221,12 @@ class Fetch(webapp2.RequestHandler):
 
         probability = classify(features, weights)
 
-        if probability < 0.5:
+        if probability < self.mid_priority_threshold:
             return
 
         doctor = patient.doctor
         
-        if probability < 0.75:
+        if probability < self.high_priority_threshold:
             message = {
                 'message': 'Patient "' \
                           + patient.first_name + ' ' \
