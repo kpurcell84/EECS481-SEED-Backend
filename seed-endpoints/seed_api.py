@@ -10,27 +10,11 @@ from messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.5.1',
+@endpoints.api(name='seed', version='v0.5.2',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
-    """ Class which defines Seed API """
-
-#####################
-### General Stuff ###
-#####################
-    @endpoints.method(message_types.VoidMessage, 
-                      message_types.VoidMessage,
-                      path='generate', http_method='POST',
-                      name='generate.put')
-    def generate_data(self, request):
-        """
-        Exposes an API endpoint to generate a random data set for testing.
-        Only run once.
-        Data set parameters adjustable in the backend
-        """
-        generate_sample_data()
-        return message_types.VoidMessage()
+    """ Class which defines Seed API """  
 
 ####################
 ### Doctor Stuff ###
@@ -326,7 +310,7 @@ class SeedApi(remote.Service):
                 old_creds.delete()
         if request.new_reg_id != None:
             GcmCreds.put_from_message(request)
-            
+
         return message_types.VoidMessage()
 
 #####################
@@ -357,6 +341,30 @@ class SeedApi(remote.Service):
             return UserCheckResponse(user_type='Doctor')
         else:
             return UserCheckResponse(user_type='None')
+
+    @endpoints.method(message_types.VoidMessage, 
+                      message_types.VoidMessage,
+                      path='generate', http_method='POST',
+                      name='generate.put')
+    def generate_data(self, request):
+        """
+        Exposes an API endpoint to generate a random data set for testing.
+        Only run once.
+        Data set parameters adjustable in the backend
+        """
+        generate_sample_data()
+        return message_types.VoidMessage()
+
+    @endpoints.method(AlertTest, 
+                      message_types.VoidMessage,
+                      path='alert_test', http_method='POST',
+                      name='alert_test.get')
+    def alert_test(self, request):
+        """
+        Exposes an API endpoint to trigger an alert
+        """
+        trigger_alert(request.email, request.septic_risk)
+        return message_types.VoidMessage()
 
 
 APPLICATION = endpoints.api_server([SeedApi],

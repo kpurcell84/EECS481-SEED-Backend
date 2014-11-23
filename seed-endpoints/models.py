@@ -73,7 +73,7 @@ class Patient(db.Model):
     last_name = db.StringProperty(required=True)
     phone = db.PhoneNumberProperty(required=True)
     diagnosis = db.StringProperty(required=True) # Yes|No|Maybe
-    septic_risk = db.IntegerProperty(required=True) # 1-99
+    septic_risk = db.FloatProperty(required=True) # 0-1
     basis_pass = db.StringProperty(required=True)
 
     def to_message(self):
