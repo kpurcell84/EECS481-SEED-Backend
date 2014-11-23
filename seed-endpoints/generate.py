@@ -237,9 +237,6 @@ def generate_alerts():
         
         pattern = get_pattern(patient, num_inserts)
 
-        message_early = "You may be at risk of sepsis, please contact your doctor"
-        message_emerg = "You are at serious risk of sepsis, please contact your doctor immediately"
-
         # Iteratate through pattern and find spots to trigger an alert
         # 4 consecutive maybe = early alert
         # 2 consecutive yes = emergency alert
@@ -258,7 +255,6 @@ def generate_alerts():
             if count1 == 8:
                 alert = Alert(patient=patient,
                                  time_alerted=time_alerted,
-                                 message=message_early,
                                  priority='Early')
                 random_data.append(alert)
                 count1 = 0
@@ -266,7 +262,6 @@ def generate_alerts():
             elif count2 == 4:
                 alert = Alert(patient=patient,
                                  time_alerted=time_alerted,
-                                 message=message_emerg,
                                  priority='Emergency')
                 random_data.append(alert)
                 count1 = 0
@@ -296,12 +291,12 @@ def generate_gcm_creds():
 def generate_sample_data():
     # Must sleep between to make sure database updates
     print "Generating sample data"
-    # generate_doctors()
-    # time.sleep(2)
-    # generate_patients()
-    # time.sleep(2)
-    # generate_quant_data()
+    generate_doctors()
+    time.sleep(2)
+    generate_patients()
+    time.sleep(2)
+    generate_quant_data()
     generate_qual_data()
-    # generate_alerts()
-    # generate_watson_questions()
-    # generate_gcm_creds()
+    generate_alerts()
+    generate_watson_questions()
+    generate_gcm_creds()

@@ -284,7 +284,6 @@ class PQualData(db.Model):
 class Alert(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
     time_alerted = db.DateTimeProperty(required=True)
-    message = db.StringProperty(required=True)
     priority = db.StringProperty(required=True) # Early|Emergency
 
     def to_message(self):
@@ -293,7 +292,6 @@ class Alert(db.Model):
         """
         return AlertResponse(patient_email=self.patient.key().name(),
                              time_alerted=self.time_alerted,
-                             message=self.message,
                              priority=self.priority)
 
     @classmethod

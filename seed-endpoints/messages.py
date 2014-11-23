@@ -99,8 +99,7 @@ class AlertResponse(Message):
     """ ProtoRPC message definition to represent a previously triggered alert """
     patient_email = StringField(1, required=True)
     time_alerted = DateTimeField(2, required=True)
-    message = StringField(3, required=True)
-    priority = StringField(4, required=True)
+    priority = StringField(3, required=True)
 
 class AlertListResponse(Message):
     alerts = MessageField(AlertResponse, 1, repeated=True)
