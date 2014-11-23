@@ -41,6 +41,9 @@ def generate_patients():
 
     db.put(random_data)
 
+    patient_list.pop() # Get rid of Andy
+
+
 # Each element in the pattern represents what range of vals to use for a timestamp
 # 0 = Normal, No
 # 1 = Medium, Maybe
@@ -58,8 +61,6 @@ def get_pattern(patient, num_inserts):
     return pattern
 
 def generate_quant_data():
-    patient_list.pop() # Get rid of Andy
-
     random_data = []  
     for dic in patient_list:
         q = Patient.all()
@@ -157,14 +158,14 @@ def generate_qual_data():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        start_time = datetime.strptime('2000-01-01T18:00:00', fmt)
-        end_time = datetime.strptime('2000-01-04T18:00:00', fmt)
+        start_time = datetime.strptime('2000-01-01T09:00:00', fmt)
+        end_time = datetime.strptime('2000-01-04T09:00:00', fmt)
 
         # convert to unix timestamp
         d1_ts = time.mktime(start_time.timetuple())
         d2_ts = time.mktime(end_time.timetuple())
 
-        frequency = 60 * 24
+        frequency = 60 * 12
 
         timediff = int(d2_ts-d1_ts) / 60
         num_inserts = timediff / frequency
@@ -236,9 +237,6 @@ def generate_alerts():
         
         pattern = get_pattern(patient, num_inserts)
 
-        message_early = "You may be at risk of sepsis, please contact your doctor"
-        message_emerg = "You are at serious risk of sepsis, please contact your doctor immediately"
-
         # Iteratate through pattern and find spots to trigger an alert
         # 4 consecutive maybe = early alert
         # 2 consecutive yes = emergency alert
@@ -257,7 +255,6 @@ def generate_alerts():
             if count1 == 8:
                 alert = Alert(patient=patient,
                                  time_alerted=time_alerted,
-                                 message=message_early,
                                  priority='Early')
                 random_data.append(alert)
                 count1 = 0
@@ -265,7 +262,6 @@ def generate_alerts():
             elif count2 == 4:
                 alert = Alert(patient=patient,
                                  time_alerted=time_alerted,
-                                 message=message_emerg,
                                  priority='Emergency')
                 random_data.append(alert)
                 count1 = 0
@@ -302,5 +298,5 @@ def generate_sample_data():
     generate_quant_data()
     generate_qual_data()
     generate_alerts()
-    # generate_watson_questions()
-    # generate_gcm_creds()
+    generate_watson_questions()
+    generate_gcm_creds()

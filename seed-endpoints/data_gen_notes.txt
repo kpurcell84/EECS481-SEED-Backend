@@ -87,6 +87,6 @@ REASONING
 
 - Made qualitative survey answers based on pattern
 
-- Generate alerts based on when they should be triggered based on patterns
+- Generated alerts based on when they should be triggered based on patterns
 
-- Train classification algorithm with data
+- Trained classification algorithm with data

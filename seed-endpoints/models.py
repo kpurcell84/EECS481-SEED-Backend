@@ -230,7 +230,7 @@ class PQualData(db.Model):
         """
         Turns the PQualData entity into a ProtoRPC object.
         """
-        return PQualDataPut(email=self.patient.key().name(),
+        return PManDataPut(email=self.patient.key().name(),
                             time_taken=self.time_taken,
                             a1=self.a1, a2=self.a2,
                             a3=self.a3, a4=self.a4,
@@ -284,7 +284,6 @@ class PQualData(db.Model):
 class Alert(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
     time_alerted = db.DateTimeProperty(required=True)
-    message = db.StringProperty(required=True)
     priority = db.StringProperty(required=True) # Early|Emergency
 
     def to_message(self):
@@ -293,7 +292,6 @@ class Alert(db.Model):
         """
         return AlertResponse(patient_email=self.patient.key().name(),
                              time_alerted=self.time_alerted,
-                             message=self.message,
                              priority=self.priority)
 
     @classmethod

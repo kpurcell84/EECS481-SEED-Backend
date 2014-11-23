@@ -36,13 +36,6 @@ class PatientDiagnosisPut(Message):
     email = StringField(1, required=True)
     diagnosis = StringField(2, required=True)
 
-class PatientManualDataPut(Message):
-    """ ProtoRPC message definition to represent manual data to be inserted in the datastore """
-    email = StringField(1, required=True)
-    blood_pressure = StringField(2, required=True)
-    body_temp = FloatField(3, required=True)
-
-
 ### PQuantData Stuff ###
 
 class PQuantDataRequest(Message):
@@ -68,20 +61,22 @@ class PQuantDataListResponse(Message):
 
 ### PQual Data Stuff ###
 
-class PQualDataPut(Message):
+class PManDataPut(Message):
     """ ProtoRPC message definition to represent a set of survey responses """
     email = StringField(1, required=True)
-    time_taken = DateTimeField(2, required=True)
-    a1 = StringField(3, required=True)
-    a2 = StringField(4, required=True)
-    a3 = StringField(5, required=True)
-    a4 = StringField(6, required=True)
-    a5 = StringField(7, required=True)
-    a6 = StringField(8, required=True)
-    a7 = StringField(9, required=True)
-    a8 = StringField(10, required=True)
-    a9 = StringField(11, required=True)
-    a10 = StringField(12, required=True)
+    time_taken = DateTimeField(2)
+    blood_pressure = StringField(3)
+    body_temp = FloatField(4)
+    a1 = StringField(5, required=True)
+    a2 = StringField(6, required=True)
+    a3 = StringField(7, required=True)
+    a4 = StringField(8, required=True)
+    a5 = StringField(9, required=True)
+    a6 = StringField(10, required=True)
+    a7 = StringField(11, required=True)
+    a8 = StringField(12, required=True)
+    a9 = StringField(13, required=True)
+    a10 = StringField(14, required=True)
 
 class PQualDataRequest(Message):
     """ ProtoRPC message definition to represent a patient qualitative data query """
@@ -91,7 +86,7 @@ class PQualDataRequest(Message):
 
 class PQualDataListResponse(Message):
     """ ProtoRPC message definition to represent a set of patient qualitative data (over a period of time) """
-    pdata_list = MessageField(PQualDataPut, 1, repeated=True)
+    pdata_list = MessageField(PManDataPut, 1, repeated=True)
 
 ### Alert Stuff ###
 
@@ -104,8 +99,7 @@ class AlertResponse(Message):
     """ ProtoRPC message definition to represent a previously triggered alert """
     patient_email = StringField(1, required=True)
     time_alerted = DateTimeField(2, required=True)
-    message = StringField(3, required=True)
-    priority = StringField(4, required=True)
+    priority = StringField(3, required=True)
 
 class AlertListResponse(Message):
     alerts = MessageField(AlertResponse, 1, repeated=True)
@@ -130,7 +124,7 @@ class WatsonQuestionsListResponse(Message):
 class GcmCredsPut(Message):
     """ ProtoRPC message definition to represent a user email and Google Cloud Messenger token associated with their device """
     email = StringField(1, required=True)
-    new_reg_id = StringField(2, required=True)
+    new_reg_id = StringField(2)
     old_reg_id = StringField(3)
 
 ### General Stuff ###
