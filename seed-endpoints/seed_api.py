@@ -324,8 +324,9 @@ class SeedApi(remote.Service):
             old_creds = q.get()
             if old_creds != None:
                 old_creds.delete()
-
-        GcmCreds.put_from_message(request)
+        if request.new_reg_id != None:
+            GcmCreds.put_from_message(request)
+            
         return message_types.VoidMessage()
 
 #####################
