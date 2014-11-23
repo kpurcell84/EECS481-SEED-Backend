@@ -1,4 +1,7 @@
 import json
+import time
+
+from datetime import datetime, timedelta
 
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
@@ -8,11 +11,13 @@ from numpy import *
 from math import *
 
 # Helper functions for classification algorithm
-
-NUM_FEATURES = 10
 GCM_URL = 'https://android.googleapis.com/gcm/send'
 API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 
+EARLY_THRESHOLD = 0.5
+EMERG_THRESHOLD = 0.75
+
+NUM_FEATURES = 10
 """
 Features:
     Systolic blood pressure
@@ -137,7 +142,45 @@ def classify(feature_matrix, w_vector):
     average_prob /= count
     return y_vector
 
-def trigger_alert(reg_ids, data):
+def trigger_alert(email, probability):
+    if probability < EARLY_THRESHOLD:
+        return
+
+    patient = Patient.get_patient(email)
+    doctor = patient.doctor
+
+    if probability < EMERG_THRESHOLD:
+        alert = Alert(patient=patient,
+                    time_alerted=datetime.fromtimestamp(time.time()),
+                    priority='Early')
+        alert.put()
+        message = {
+            'message': 'Patient "' \
+                      + patient.first_name + ' ' \
+                      + patient.last_name + ' shows some indications of sepsis.'
+        }
+
+    else:
+        alert = Alert(patient=patient,
+                    time_alerted=datetime.fromtimestamp(time.time()),
+                    priority='Emergency')
+        alert.put()
+        message = {
+            'message': 'Your health data shows HIGH indications of sepsis. ' \
+                     + 'Please contact doctor immediately.'
+        }
+        reg_ids = GcmCreds.get_reg_ids(patient.key().name())
+        send_alert(reg_ids, message)
+        message = {
+            'message': 'Patient "' \
+                      + patient.first_name + ' ' \
+                      + patient.last_name + ' shows HIGH indications of sepsis.'
+        }
+    reg_ids = GcmCreds.get_reg_ids(doctor.key().name())
+    send_alert(reg_ids, message)
+    return
+
+def send_alert(reg_ids, data):
     """
     Triggers alert to doctor and optionally to patient
 
@@ -170,4 +213,4 @@ def trigger_alert(reg_ids, data):
         msg = "GCM service is unavailable\n"
     else:
         msg = "GCM service error: %d\n" % result.status_code
-    return msg
+    return

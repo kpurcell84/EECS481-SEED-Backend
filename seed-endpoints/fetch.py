@@ -5,6 +5,7 @@ Fetches patient data from Basis Health Tracker and stores it into database
 import webapp2
 import urllib
 import Cookie
+import json
 import time
 
 from datetime import datetime, timedelta
@@ -20,8 +21,6 @@ class Fetch(webapp2.RequestHandler):
     patient_key = 'seedsystem00@gmail.com'
     export_offset = 0
     margin_of_error = 15 * 60 #in seconds
-    mid_priority_threshold = 0.5
-    high_priority_threshold = 0.75
 
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
@@ -222,41 +221,7 @@ class Fetch(webapp2.RequestHandler):
         self.response.write(probability)
         self.response.write('\n')
 
-        if probability < self.mid_priority_threshold:
-            return
-
-        doctor = patient.doctor
-        
-        if probability < self.high_priority_threshold:
-            alert = Alert(patient=patient,
-                        time_alerted=datetime.fromtimestamp(time.time()),
-                        priority='Early')
-            alert.put()
-            message = {
-                'message': 'Patient "' \
-                          + patient.first_name + ' ' \
-                          + patient.last_name + ' shows some indications of sepsis.'
-            }
-
-        else:
-            alert = Alert(patient=patient,
-                        time_alerted=datetime.fromtimestamp(time.time()),
-                        priority='Emergency')
-            alert.put()
-            message = {
-                'message': 'Your health data shows HIGH indications of sepsis. ' \
-                         + 'Please contact doctor immediately.'
-            }
-            reg_ids = GcmCreds.get_reg_ids(patient.key().name())
-            self.trigger_alert(reg_ids, message)
-            message = {
-                'message': 'Patient "' \
-                          + patient.first_name + ' ' \
-                          + patient.last_name + ' shows HIGH indications of sepsis.'
-            }
-        reg_ids = GcmCreds.get_reg_ids(doctor.key().name())
-        #reg_ids.append("APA91bHJ952iglrH8_cGY0OHu4UfA1DosW2o9ZwXT8Ki8YnHmpr5Y7SoRnwRgJZ3RCn37j_Fw3QbyHQYFmbatHqVgPi7mlO0m1JyExwXglgBW8H1mbeJmKF6KjwCwTvbse4NoyP8gGQI29zGy_Vk7Y9VQd6dPYj5ogcdETGYh4UYBFBWuWgWKwA")
-        trigger_alert(reg_ids, message)
+        trigger_alert(patient.key().name(), probability)
 
         return
 
