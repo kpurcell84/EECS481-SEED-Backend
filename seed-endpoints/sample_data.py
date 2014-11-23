@@ -145,7 +145,7 @@ qa_pair['answer'] = 'Yes, it has a 95% negative predictive value.'
 watson_list.append(qa_pair)
 
 qa_pair = {}
-qa_pair['question'] = ' Is there a biomarker model that can be used to predict the mortality of children with septic shock?'
+qa_pair['question'] = 'Is there a biomarker model that can be used to predict the mortality of children with septic shock?'
 qa_pair['answer'] = 'The PERSEVERE biomarker model reliably predicts mortality of children with septic shock.'
 watson_list.append(qa_pair)
 

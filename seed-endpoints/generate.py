@@ -41,6 +41,9 @@ def generate_patients():
 
     db.put(random_data)
 
+    patient_list.pop() # Get rid of Andy
+
+
 # Each element in the pattern represents what range of vals to use for a timestamp
 # 0 = Normal, No
 # 1 = Medium, Maybe
@@ -58,8 +61,6 @@ def get_pattern(patient, num_inserts):
     return pattern
 
 def generate_quant_data():
-    patient_list.pop() # Get rid of Andy
-
     random_data = []  
     for dic in patient_list:
         q = Patient.all()
@@ -157,14 +158,14 @@ def generate_qual_data():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        start_time = datetime.strptime('2000-01-01T18:00:00', fmt)
-        end_time = datetime.strptime('2000-01-04T18:00:00', fmt)
+        start_time = datetime.strptime('2000-01-01T09:00:00', fmt)
+        end_time = datetime.strptime('2000-01-04T09:00:00', fmt)
 
         # convert to unix timestamp
         d1_ts = time.mktime(start_time.timetuple())
         d2_ts = time.mktime(end_time.timetuple())
 
-        frequency = 60 * 24
+        frequency = 60 * 12
 
         timediff = int(d2_ts-d1_ts) / 60
         num_inserts = timediff / frequency

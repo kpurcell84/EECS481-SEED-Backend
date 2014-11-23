@@ -183,7 +183,7 @@ class PQualData(db.Model):
         """
         Turns the PQualData entity into a ProtoRPC object.
         """
-        return PQualDataPut(email=self.patient.key().name(),
+        return PManDataPut(email=self.patient.key().name(),
                             time_taken=self.time_taken,
                             a1=self.a1, a2=self.a2,
                             a3=self.a3, a4=self.a4,

@@ -10,7 +10,7 @@ from messages import *
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.5.0',
+@endpoints.api(name='seed', version='v0.5.1',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
@@ -161,32 +161,6 @@ class SeedApi(remote.Service):
 
         return message_types.VoidMessage()
 
-    @endpoints.method(PatientManualDataPut, message_types.VoidMessage,
-                      path='patient_man_data_put', http_method='POST',
-                      name='patient_man_data.put')
-    def patient_man_data_put(self, request):
-        """
-        Exposes an API endpoint to insert a patient's manual quantitative data into the datastore
-
-        Args:
-            request: An instance of PatientManualDataPut parsed from the API request.
-        Returns:
-            Nothing
-        """
-        q = Patient.all()
-        q.filter('__key__ =', Key.from_path('Patient', request.email))
-        patient = q.get()
-
-        if patient != None:
-            time_taken = datetime.now()
-            new_datum = PQuantData(patient=patient,
-                                   time_taken=time_taken,
-                                   blood_pressure=request.blood_pressure,
-                                   body_temp=request.body_temp)
-            new_datum.put()
-
-        return message_types.VoidMessage()
-
 ##################
 ### Data Stuff ###
 ##################
@@ -234,15 +208,15 @@ class SeedApi(remote.Service):
         else:
             return PQualDataListResponse()
 
-    @endpoints.method(PQualDataPut, message_types.VoidMessage,
-                      path='p_qual_data_put', http_method='POST',
-                      name='p_qual_data.put')
-    def p_qual_data_put(self, request):
+    @endpoints.method(PManDataPut, message_types.VoidMessage,
+                      path='p_man_data_put', http_method='POST',
+                      name='p_man_data.put')
+    def p_man_data_put(self, request):
         """
-        Exposes an API endpoint to inserting qualitative patient data from the survey
+        Exposes an API endpoint for inserting qualitative patient data from the survey and manual quant data (blood pressure and body temp)
 
         Args:
-            request: An instance of PQualDataPut parsed from the API
+            request: An instance of PManDataPut parsed from the API
                 request.
         Returns:
             Nothing
@@ -252,7 +226,15 @@ class SeedApi(remote.Service):
         patient = q.get()
 
         if patient != None:
+            request.time_taken = datetime.now()
+            new_datum = PQuantData(patient=patient,
+                                   time_taken=request.time_taken,
+                                   blood_pressure=request.blood_pressure,
+                                   body_temp=request.body_temp)
+            new_datum.put()
+
             PQualData.put_from_message(request, patient)
+
             return message_types.VoidMessage()
         else:
             return message_types.VoidMessage()
