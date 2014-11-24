@@ -98,8 +98,10 @@ class AlertsRequest(Message):
 class AlertResponse(Message):
     """ ProtoRPC message definition to represent a previously triggered alert """
     patient_email = StringField(1, required=True)
-    time_alerted = DateTimeField(2, required=True)
-    priority = StringField(3, required=True)
+    first_name = StringField(2, required=True)
+    last_name = StringField(3, required=True)
+    time_alerted = DateTimeField(4, required=True)
+    priority = StringField(5, required=True)
 
 class AlertListResponse(Message):
     alerts = MessageField(AlertResponse, 1, repeated=True)
@@ -137,7 +139,7 @@ class UserCheckResponse(Message):
     """ ProtoRPC message definition to represent a response about the type of user type = (Patient | Doctor | None) """
     user_type = StringField(1, required=True)
 
-class AlertRequest(Message):
+class AlertTestRequest(Message):
     """ ProtoRPC message definition to represent a request to trigger a fake alert for testing/demo purposes """
     patient_email = StringField(1, required=True)
     septic_risk = FloatField(2, required=True)

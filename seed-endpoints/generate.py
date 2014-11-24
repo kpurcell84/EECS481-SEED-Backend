@@ -293,10 +293,10 @@ def generate_sample_data():
     print "Generating sample data"
     # generate_doctors()
     # time.sleep(2)
-    # generate_patients()
+    generate_patients()
     # time.sleep(2)
     # generate_quant_data()
-    generate_qual_data()
-    generate_alerts()
+    # generate_qual_data()
+    # generate_alerts()
     # generate_watson_questions()
     # generate_gcm_creds()
