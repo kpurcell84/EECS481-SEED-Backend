@@ -149,35 +149,33 @@ def trigger_alert(email, probability):
     patient = Patient.get_patient(email)
     doctor = patient.doctor
 
+    patient_name = patient.first_name + ' ' + patient.last_name
+
+    data = {
+        'patient_email': email,
+        'patient_name': patient_name
+    }
+
     if probability < EMERG_THRESHOLD:
+        priority = 'Early'
         alert = Alert(patient=patient,
                     time_alerted=datetime.fromtimestamp(time.time()),
-                    priority='Early')
+                    priority=priority)
         alert.put()
-        message = {
-            'message': 'Patient "' \
-                      + patient.first_name + ' ' \
-                      + patient.last_name + ' shows some indications of sepsis.'
-        }
+        data['priority'] = priority
 
     else:
+        priority = 'Emergency'
         alert = Alert(patient=patient,
                     time_alerted=datetime.fromtimestamp(time.time()),
-                    priority='Emergency')
+                    priority=priority)
         alert.put()
-        message = {
-            'message': 'Your health data shows HIGH indications of sepsis. ' \
-                     + 'Please contact doctor immediately.'
-        }
-        reg_ids = GcmCreds.get_reg_ids(patient.key().name())
-        send_alert(reg_ids, message)
-        message = {
-            'message': 'Patient "' \
-                      + patient.first_name + ' ' \
-                      + patient.last_name + ' shows HIGH indications of sepsis.'
-        }
+        data['priority'] = priority
+        reg_ids = GcmCreds.get_reg_ids(email)
+        send_alert(reg_ids, data)
+
     reg_ids = GcmCreds.get_reg_ids(doctor.key().name())
-    send_alert(reg_ids, message)
+    send_alert(reg_ids, data)
     return
 
 def send_alert(reg_ids, data):
