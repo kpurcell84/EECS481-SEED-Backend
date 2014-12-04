@@ -70,8 +70,8 @@ def generate_quant_data():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        start_time = datetime.strptime('2000-01-01T08:00:00', fmt)
-        end_time = datetime.strptime('2000-01-04T08:00:00', fmt)
+        start_time = datetime.strptime('2014-11-01T08:00:00', fmt)
+        end_time = datetime.strptime('2014-11-04T08:00:00', fmt)
 
         # convert to unix timestamp
         d1_ts = time.mktime(start_time.timetuple())
@@ -158,8 +158,8 @@ def generate_qual_data():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        start_time = datetime.strptime('2000-01-01T09:00:00', fmt)
-        end_time = datetime.strptime('2000-01-04T09:00:00', fmt)
+        start_time = datetime.strptime('2014-11-01T09:00:00', fmt)
+        end_time = datetime.strptime('2014-11-04T09:00:00', fmt)
 
         # convert to unix timestamp
         d1_ts = time.mktime(start_time.timetuple())
@@ -219,8 +219,8 @@ def generate_alerts():
             continue
 
         fmt = '%Y-%m-%dT%H:%M:%S'
-        start_time = datetime.strptime('2000-01-01T08:00:00', fmt)
-        end_time = datetime.strptime('2000-01-04T08:00:00', fmt)
+        start_time = datetime.strptime('2014-11-01T08:00:00', fmt)
+        end_time = datetime.strptime('2014-11-04T08:00:00', fmt)
 
         # convert to unix timestamp
         d1_ts = time.mktime(start_time.timetuple())
@@ -273,7 +273,7 @@ def generate_watson_questions():
     random_data = []
 
     fmt = '%Y-%m-%dT%H:%M:%S'
-    time_asked = datetime.strptime('2000-01-01T00:00:00', fmt) 
+    time_asked = datetime.strptime('2014-11-01T00:00:00', fmt) 
     for dic in watson_list:
         time_asked = time_asked + timedelta(hours=2)
 
@@ -293,10 +293,10 @@ def generate_sample_data():
     print "Generating sample data"
     # generate_doctors()
     # time.sleep(2)
-    generate_patients()
+    # generate_patients()
     # time.sleep(2)
-    # generate_quant_data()
-    # generate_qual_data()
-    # generate_alerts()
-    # generate_watson_questions()
+    generate_quant_data()
+    generate_qual_data()
+    generate_alerts()
+    generate_watson_questions()
     # generate_gcm_creds()
