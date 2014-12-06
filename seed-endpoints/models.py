@@ -182,6 +182,8 @@ class PQuantData(db.Model):
         q = cls.all()
         q.filter('patient =', patient)
         q.order('time_taken')
+        if q.count() <= 0:
+            return None
         return q
 
     @classmethod
@@ -293,6 +295,9 @@ class PQualData(db.Model):
         q_all = cls.all()
         q_all.filter('patient =', patient)
         q_all.order('time_taken')
+
+        if q_all.count() <= 0:
+            return None
 
         return_list = []
         for q in q_all:
@@ -475,6 +480,8 @@ class ClassWeights(db.Model):
         w = cls.all()
         w.order('-time_taken')
         weights = w.get()
+        if weights is None:
+            return None
         w_vector = matrix([
             [weights.w1],
             [weights.w2],

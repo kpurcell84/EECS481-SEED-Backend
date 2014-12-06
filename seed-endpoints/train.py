@@ -19,18 +19,19 @@ class Train(webapp2.RequestHandler):
     
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
-        self.load_data()
-        self.train()
-        self.store_weights()
+        if self.load_data():
+            self.train()
+            self.store_weights()
 
     def load_data(self):
-        data = []
         all_patients = Patient.all()
         all_patients.filter('diagnosis !=', 'Maybe')
+        success = False
         for patient in all_patients:
             feature = get_feature_matrix(patient)
             if feature is None:
                 continue
+            success = True
             if patient.diagnosis == 'Yes':
                 t = ones((feature.shape[0], 1))
             else:
@@ -39,8 +40,11 @@ class Train(webapp2.RequestHandler):
             self.feature_matrix = append(self.feature_matrix, feature, axis=0)
             self.t_vector = append(self.t_vector, t, axis=0)
 
-        #self.response.write(self.feature_matrix)
-        #self.response.write(self.t_vector)
+        if success:
+            #self.response.write(self.feature_matrix)
+            #self.response.write(self.t_vector)
+        return success
+        
 
     def train(self):
         count = 0

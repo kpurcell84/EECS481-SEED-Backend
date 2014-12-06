@@ -169,7 +169,7 @@ class Fetch(webapp2.RequestHandler):
         weights = ClassWeights.get_recent_weights()
         manual_data = PQuantData.get_recent_manual_data(patient)
         qual_data = PQualData.get_recent_data(patient)
-        if manual_data is None or qual_data is None:
+        if manual_data is None or qual_data is None or weights is None:
             return
         parsed_blood_pressure = manual_data.blood_pressure.split('/',1)
         systolic = float(parsed_blood_pressure[0])
@@ -181,13 +181,13 @@ class Fetch(webapp2.RequestHandler):
                 systolic,
                 diastolic,
                 body_temp,
-                0,
+                0.0,
                 metrics['gsr'],
-                0,
+                0.0,
                 quant_data.skin_temp,
-                0,
+                0.0,
                 metrics['heart_rate'],
-                0,
+                0.0,
                 qual_data
             ]])
         elif metrics['activity'] == 'Rem' or metrics['activity'] == 'Light' or metrics['activity'] == 'Deep':
@@ -196,11 +196,11 @@ class Fetch(webapp2.RequestHandler):
                 diastolic,
                 body_temp,
                 metrics['gsr'],
-                0,
+                0.0,
                 metrics['skin_temp'],
-                0,
-                0,
-                0,
+                0.0,
+                0.0,
+                0.0,
                 metrics['heart_rate'],
                 qual_data
             ]])
@@ -210,12 +210,12 @@ class Fetch(webapp2.RequestHandler):
                 diastolic,
                 body_temp,
                 metrics['gsr'],
-                0,
+                0.0,
                 metrics['skin_temp'],
-                0,
+                0.0,
                 metrics['heart_rate'],
-                0,
-                0,
+                0.0,
+                0.0,
                 qual_data
             ]])
 

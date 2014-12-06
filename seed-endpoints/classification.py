@@ -56,7 +56,7 @@ def get_feature_matrix(patient):
     all_qual_data = PQualData.get_patient_data(patient)
     index_qual = 0
 
-    if not all_quant_data or not all_quant_data:
+    if all_quant_data is None or not all_quant_data is None:
         return None
 
     # Look for first logged data of blood pressure and body temperature
@@ -121,13 +121,13 @@ def get_feature_matrix(patient):
                 systolic,
                 diastolic,
                 body_temp,
-                0,
+                0.0,
                 quant_data.gsr,
-                0,
+                0.0,
                 quant_data.skin_temp,
-                0,
+                0.0,
                 quant_data.heart_rate,
-                0,
+                0.0,
                 p_yes
             ]])
         elif quant_data.activity_type == 'Rem' or quant_data.activity_type == 'Light' or quant_data.activity_type == 'Deep':
@@ -136,11 +136,11 @@ def get_feature_matrix(patient):
                 diastolic,
                 body_temp,
                 quant_data.gsr,
-                0,
+                0.0,
                 quant_data.skin_temp,
-                0,
-                0,
-                0,
+                0.0,
+                0.0,
+                0.0,
                 quant_data.heart_rate,
                 p_yes
             ]])
@@ -150,12 +150,12 @@ def get_feature_matrix(patient):
                 diastolic,
                 body_temp,
                 quant_data.gsr,
-                0,
+                0.0,
                 quant_data.skin_temp,
-                0,
+                0.0,
                 quant_data.heart_rate,
-                0,
-                0,
+                0.0,
+                0.0,
                 p_yes
             ]])
         feature_matrix = append(feature_matrix, feature, axis=0)
@@ -172,7 +172,7 @@ def classify(feature_matrix, w_vector):
     """
     y_vector = feature_matrix * w_vector
     count = 0
-    average_prob = 0
+    average_prob = 0.0
     for y in nditer(y_vector, op_flags=['readwrite']):
         average_prob += sigmoid(y)
         count += 1
