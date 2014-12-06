@@ -20,8 +20,11 @@ class Train(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
         if self.load_data():
+            self.response.write("Load success!\n")
             self.train()
             self.store_weights()
+        else:
+            self.response.write("Load failed.\n")
 
     def load_data(self):
         all_patients = Patient.all()
@@ -30,6 +33,7 @@ class Train(webapp2.RequestHandler):
         for patient in all_patients:
             feature = get_feature_matrix(patient)
             if feature is None:
+                self.response.write(patient.first_name + ' ' + patient.last_name + "'s data load failed\n")
                 continue
             success = True
             if patient.diagnosis == 'Yes':
@@ -40,7 +44,7 @@ class Train(webapp2.RequestHandler):
             self.feature_matrix = append(self.feature_matrix, feature, axis=0)
             self.t_vector = append(self.t_vector, t, axis=0)
 
-        if success:
+        #if success:
             #self.response.write(self.feature_matrix)
             #self.response.write(self.t_vector)
         return success
