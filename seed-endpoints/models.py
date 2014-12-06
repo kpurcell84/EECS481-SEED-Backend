@@ -74,7 +74,7 @@ class Patient(db.Model):
     phone = db.PhoneNumberProperty(required=True)
     diagnosis = db.StringProperty(required=True) # Yes|No|Maybe
     septic_risk = db.FloatProperty(required=True) # 0-1
-    basis_pass = db.StringProperty(required=True)
+    basis_pass = db.StringProperty()
 
     def to_message(self):
         """
@@ -86,8 +86,7 @@ class Patient(db.Model):
                             phone=self.phone,
                             doctor_email=self.doctor.key().name(),
                             diagnosis=self.diagnosis,
-                            septic_risk=self.septic_risk,
-                            basis_pass=self.basis_pass)
+                            septic_risk=self.septic_risk)
 
     @classmethod
     def put_from_message(cls, message):
@@ -109,8 +108,7 @@ class Patient(db.Model):
                         last_name=message.last_name,
                         phone=message.phone,
                         diagnosis='No',
-                        septic_risk=-1,
-                        basis_pass=message.basis_pass)
+                        septic_risk=-1.0)
         new_patient.put()
         return new_patient
 
@@ -165,7 +163,7 @@ class PQuantData(db.Model):
         q.filter('time_taken <=', message.end_time)
         q.order('time_taken')
 
-        pdata_list = [ pdata.to_message() for pdata in q.run() ]
+        pdata_list = [ pdata.to_message() for pdata in q ]
 
         return PQuantDataListResponse(pdata_list=pdata_list)
 
@@ -253,7 +251,7 @@ class PQualData(db.Model):
         q.filter('time_taken <=', message.end_time)
         q.order('time_taken')
 
-        pdata_list = [ pdata.to_message() for pdata in q.run() ]
+        pdata_list = [ pdata.to_message() for pdata in q ]
 
         return PQualDataListResponse(pdata_list=pdata_list)
 
@@ -371,16 +369,16 @@ class Alert(db.Model):
         q = cls.all()
         q.filter('time_alerted >=', message.start_time)
         q.filter('time_alerted <=', message.end_time)
+        q.order('-time_alerted')
 
         if u_type == "Patient":
             q.filter('patient =', user)
             q.filter('priority =', 'Emergency')
-            alerts = [ alert.to_message() for alert in q.run() ]
+            alerts = [ alert.to_message() for alert in q ]
         elif u_type == "Doctor":
             for patient in user.patient_set:
                 for alert in patient.alert_set:
                     alerts.append(alert.to_message())
-        q.order('-time_alerted')
 
         return AlertListResponse(alerts=alerts)
 
