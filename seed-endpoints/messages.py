@@ -25,7 +25,6 @@ class PatientPut(Message):
     doctor_email = StringField(5, required=True)
     diagnosis = StringField(6)
     septic_risk = FloatField(7)
-    basis_pass = StringField(8, required=True)
 
 class PatientListResponse(Message):
     """ ProtoRPC message definition to represent a list of patients reponse """
