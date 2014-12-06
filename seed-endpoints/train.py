@@ -19,18 +19,19 @@ class Train(webapp2.RequestHandler):
     
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
-        self.load_data()
-        self.train()
-        self.store_weights()
+        if self.load_data():
+            self.train()
+            self.store_weights()
 
     def load_data(self):
-        data = []
         all_patients = Patient.all()
         all_patients.filter('diagnosis !=', 'Maybe')
+        success = False
         for patient in all_patients:
             feature = get_feature_matrix(patient)
             if feature is None:
                 continue
+            success = True
             if patient.diagnosis == 'Yes':
                 t = ones((feature.shape[0], 1))
             else:
@@ -39,8 +40,11 @@ class Train(webapp2.RequestHandler):
             self.feature_matrix = append(self.feature_matrix, feature, axis=0)
             self.t_vector = append(self.t_vector, t, axis=0)
 
-        #self.response.write(self.feature_matrix)
-        #self.response.write(self.t_vector)
+        if success:
+            #self.response.write(self.feature_matrix)
+            #self.response.write(self.t_vector)
+        return success
+        
 
     def train(self):
         count = 0
@@ -79,7 +83,8 @@ class Train(webapp2.RequestHandler):
                             w7=float(self.w_vector[6,0]),
                             w8=float(self.w_vector[7,0]),
                             w9=float(self.w_vector[8,0]),
-                            w10=float(self.w_vector[9,0]))
+                            w10=float(self.w_vector[9,0]),
+                            w11=float(self.w_vector[10,0]))
         data.put()
 
 APPLICATION = webapp2.WSGIApplication([
