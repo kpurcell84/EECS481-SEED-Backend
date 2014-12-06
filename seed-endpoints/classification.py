@@ -17,7 +17,7 @@ API_KEY = 'AIzaSyASQHVSepuoISRArUhOXUrQIXHB6ZQzFRg'
 EARLY_THRESHOLD = 0.5
 EMERG_THRESHOLD = 0.75
 
-NUM_FEATURES = 10
+NUM_FEATURES = 11
 """
 Features:
     Systolic blood pressure
@@ -30,6 +30,7 @@ Features:
     Heart rate (When inactive)
     Heart rate (When active)
     Heart rate (When sleep)
+    Qualitative data yes ratio
 """
 
 def sigmoid(x):
@@ -52,6 +53,11 @@ def get_feature_matrix(patient):
     """
     feature_matrix = empty([0, NUM_FEATURES])
     all_quant_data = PQuantData.get_patient_data(patient)
+    all_qual_data = PQualData.get_patient_data(patient)
+    index_qual = 0
+
+    if not all_quant_data or not all_quant_data:
+        return None
 
     # Look for first logged data of blood pressure and body temperature
     contain_blood_pressure = False
@@ -81,6 +87,35 @@ def get_feature_matrix(patient):
         if quant_data.activity_type == None:
             continue
 
+        if all_qual_data[index_qual].time_taken < quant_data.time_taken:
+            if index_qual + 1 < len(all_qual_data):
+                index_qual += 1
+
+        # Calculate proportion of qual_data answered "Yes"
+        qual_data = all_qual_data[index_qual]
+        num_yes = 0.0
+        if qual_data.a1 == "Yes":
+            num_yes += 1.0
+        if qual_data.a2 == "Yes":
+            num_yes += 1.0
+        if qual_data.a3 == "Yes":
+            num_yes += 1.0
+        if qual_data.a4 == "Yes":
+            num_yes += 1.0
+        if qual_data.a5 == "Yes":
+            num_yes += 1.0
+        if qual_data.a6 == "Yes":
+            num_yes += 1.0
+        if qual_data.a7 == "Yes":
+            num_yes += 1.0
+        if qual_data.a8 == "Yes":
+            num_yes += 1.0
+        if qual_data.a9 == "Yes":
+            num_yes += 1.0
+        if qual_data.a10 == "Yes":
+            num_yes += 1.0
+        p_yes = num_yes/10.0
+
         if quant_data.activity_type == 'Run' or quant_data.activity_type == 'Bike':
             feature = matrix([[
                 systolic,
@@ -92,7 +127,8 @@ def get_feature_matrix(patient):
                 quant_data.skin_temp,
                 0,
                 quant_data.heart_rate,
-                0
+                0,
+                p_yes
             ]])
         elif quant_data.activity_type == 'Rem' or quant_data.activity_type == 'Light' or quant_data.activity_type == 'Deep':
             feature = matrix([[
@@ -105,7 +141,8 @@ def get_feature_matrix(patient):
                 0,
                 0,
                 0,
-                quant_data.heart_rate
+                quant_data.heart_rate,
+                p_yes
             ]])
         else:
             feature = matrix([[
@@ -118,7 +155,8 @@ def get_feature_matrix(patient):
                 0,
                 quant_data.heart_rate,
                 0,
-                0
+                0,
+                p_yes
             ]])
         feature_matrix = append(feature_matrix, feature, axis=0)
     return feature_matrix

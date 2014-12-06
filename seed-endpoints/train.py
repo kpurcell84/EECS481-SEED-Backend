@@ -79,7 +79,8 @@ class Train(webapp2.RequestHandler):
                             w7=float(self.w_vector[6,0]),
                             w8=float(self.w_vector[7,0]),
                             w9=float(self.w_vector[8,0]),
-                            w10=float(self.w_vector[9,0]))
+                            w10=float(self.w_vector[9,0]),
+                            w11=float(self.w_vector[10,0]))
         data.put()
 
 APPLICATION = webapp2.WSGIApplication([

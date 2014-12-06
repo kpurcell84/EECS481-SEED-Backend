@@ -280,6 +280,64 @@ class PQualData(db.Model):
         new_datum.put()
         return
 
+    @classmethod
+    def get_patient_data(cls, patient):
+        """
+        Gets all quanlitative data of specific patient in increasing time order
+
+        Args:
+            patient: A Patient entity
+        Returns:
+            A List of all qualitative data of patient
+        """
+        q_all = cls.all()
+        q_all.filter('patient =', patient)
+        q_all.order('time_taken')
+
+        return_list = []
+        for q in q_all:
+            return_list.append(q)
+        return return_list
+
+    @classmethod
+    def get_recent_data(cls, patient):
+        """
+        Gets most recently logged qualitative data
+
+        Args:
+            patient: A Patient entity
+        Returns:
+            Proportion of "Yes" in most recent qualitative data
+        """
+        q_all = cls.all()
+        q_all.filter('patient =', patient)
+        q_all.order('-time_taken')
+        qual_data = q_all.get()
+        if qual_data is None:
+            return None
+        num_yes = 0.0
+        if qual_data.a1 == "Yes":
+            num_yes += 1.0
+        if qual_data.a2 == "Yes":
+            num_yes += 1.0
+        if qual_data.a3 == "Yes":
+            num_yes += 1.0
+        if qual_data.a4 == "Yes":
+            num_yes += 1.0
+        if qual_data.a5 == "Yes":
+            num_yes += 1.0
+        if qual_data.a6 == "Yes":
+            num_yes += 1.0
+        if qual_data.a7 == "Yes":
+            num_yes += 1.0
+        if qual_data.a8 == "Yes":
+            num_yes += 1.0
+        if qual_data.a9 == "Yes":
+            num_yes += 1.0
+        if qual_data.a10 == "Yes":
+            num_yes += 1.0
+        return num_yes/10.0
+
 
 class Alert(db.Model):
     patient = db.ReferenceProperty(Patient, required=True)
@@ -404,6 +462,7 @@ class ClassWeights(db.Model):
     w8 = db.FloatProperty(required=True)
     w9 = db.FloatProperty(required=True)
     w10 = db.FloatProperty(required=True)
+    w11 = db.FloatProperty(required=True)
 
     @classmethod
     def get_recent_weights(cls):
@@ -426,6 +485,7 @@ class ClassWeights(db.Model):
             [weights.w7],
             [weights.w8],
             [weights.w9],
-            [weights.w10]
+            [weights.w10],
+            [weights.w11],
         ])
         return w_vector
