@@ -102,7 +102,19 @@ class Patient(db.Model):
         q.filter('__key__ =', Key.from_path('Doctor', message.doctor_email))
         doctor = q.get()
 
-        new_patient = cls(key_name=message.email,
+        new_patient = None
+        patient = Patient.get_patient(message.email)
+        if patient != None:
+            new_patient = cls(key_name=message.email,
+                        doctor=doctor,
+                        first_name=message.first_name,
+                        last_name=message.last_name,
+                        phone=message.phone,
+                        diagnosis=patient.diagnosis,
+                        septic_risk=patient.septic_risk,
+                        basis_pass=patient.basis_pass)
+        else:
+            new_patient = cls(key_name=message.email,
                         doctor=doctor,
                         first_name=message.first_name,
                         last_name=message.last_name,
