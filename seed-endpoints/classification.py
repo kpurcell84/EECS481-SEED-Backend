@@ -84,7 +84,10 @@ def get_feature_matrix(patient):
             diastolic = float(parsed_blood_pressure[1])
         if quant_data.body_temp != None:
             body_temp = quant_data.body_temp
-        if quant_data.activity_type == None:
+        if quant_data.activity_type == None or \
+                quant_data.gsr == None or \
+                quant_data.skin_temp == None or \
+                quant_data.heart_rate == None:
             continue
 
         if all_qual_data[index_qual].time_taken < quant_data.time_taken:
