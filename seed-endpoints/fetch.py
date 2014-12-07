@@ -32,8 +32,8 @@ class Fetch(webapp2.RequestHandler):
         password = patient.basis_pass
         self.login(username, password)
 
-        for i in range(0,30):
-            self.cur_epoch -= (i * 60)
+        for i in range(60):
+            self.cur_epoch -= 60
             self.export_date = time.strftime(
                 "%Y-%m-%d",
                 time.localtime(self.cur_epoch))
