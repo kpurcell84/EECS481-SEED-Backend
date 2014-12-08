@@ -56,7 +56,7 @@ def get_feature_matrix(patient):
     all_qual_data = PQualData.get_patient_data(patient)
     index_qual = 0
 
-    if all_quant_data is None or all_quant_data is None:
+    if all_quant_data is None or all_qual_data is None:
         return None
 
     # Look for first logged data of blood pressure and body temperature
