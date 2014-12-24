@@ -50,3 +50,8 @@ indexes:
   - name: patient
   - name: time_taken
     direction: desc
+
+- kind: PQuantData
+  properties:
+  - name: patient
+  - name: body_temp
