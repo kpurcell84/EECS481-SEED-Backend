@@ -11,7 +11,7 @@ from classification import trigger_alert
 
 CLIENT_ID = '264671521534-evjhe6al5t2ahsba3eq2tf8jj78olpei.apps.googleusercontent.com'
 
-@endpoints.api(name='seed', version='v0.5.5',
+@endpoints.api(name='seed', version='v0.5.6',
                description='A test for passing data through the API',
                allowed_client_ids=[CLIENT_ID, endpoints.API_EXPLORER_CLIENT_ID])
 class SeedApi(remote.Service):
